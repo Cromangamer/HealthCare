@@ -1,0 +1,25 @@
+✅ Google Authentication
+
+✅ OTP Login
+
+✅ Email Verification
+
+✅ Password Reset
+
+✅ Google Maps
+
+✅ Cloudinary Uploads
+
+✅ Email Notifications
+
+✅ Socket.io
+
+✅ Payment Gateway
+
+✅ AI Chatbot
+
+✅ Admin Analytics
+
+✅ Review System
+
+✅ Care Notes
