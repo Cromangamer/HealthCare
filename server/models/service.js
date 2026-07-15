@@ -12,16 +12,16 @@ const serviceSchema = new Schema({
     serviceType: {
         type: String,
         enum: [
+            "Companion Care",
+            "Doctor Consultation",
             "Elderly Care",
             "Home Nursing",
+            "ICU Care",
+            "Medical Attendant",
+            "Other",
             "Physiotherapy",
             "Post Surgery Care",
-            "Doctor Consultation",
-            "Medical Attendant",
-            "Companion Care",
-            "ICU Care",
-            "Palliative Care",
-            "Other"
+            "Palliative Care"
         ],
         required: true,
     },
@@ -98,12 +98,6 @@ const serviceSchema = new Schema({
         },
     },
 
-    serviceExperience: {
-        type: Number, // Years
-        default: 0,
-        min: 0,
-    },
-
     rating: {
         type: Number,
         default: 0,
@@ -125,6 +119,32 @@ const serviceSchema = new Schema({
 }, {
     timestamps: true,
 });
+
+serviceSchema.virtual("serviceExperience").get(function () {
+    const today = new Date();
+    const start = new Date(this.serviceStartDate);
+
+    let years = today.getFullYear() - start.getFullYear();
+
+    const monthDiff = today.getMonth() - start.getMonth();
+    const dayDiff = today.getDate() - start.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        years--;
+    }
+
+    return Math.max(0, years);
+});
+
+serviceSchema.set("toJSON", { virtuals: true });
+serviceSchema.set("toObject", { virtuals: true });
+
+/*
+{
+    "serviceStartDate": "2022-06-15",
+    "serviceExperience": 4
+}
+*/
 
 
 const Service = mongoose.model('Service', serviceSchema);

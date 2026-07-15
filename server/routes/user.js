@@ -44,3 +44,20 @@ router.put("/users/me", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }); // Update My User Profile
+
+router.delete("/users/me", async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.user.id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  } 
+}); // Delete My User Profile
+
+
+
+module.exports = router;
