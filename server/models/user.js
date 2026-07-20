@@ -44,6 +44,9 @@ const userSchema = new Schema({
         enum: ["user", "caregiver", "admin"],
         default: "user",
     },
+    password: {
+        type: String,
+    },
 
     profileImage: {
         type: String,

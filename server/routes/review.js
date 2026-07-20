@@ -3,7 +3,7 @@ const router = express.Router();
 const Review = require("../models/review");
 const Caregiver = require("../models/caregiver");
 const Booking = require("../models/booking");
-const {updateFeedback , getServiceFeedback } = require("../helper/feedbackSystem")
+
 
 router.post("/feedback/:bookingId", async(req, res) =>{
     try{
@@ -53,37 +53,6 @@ router.post("/feedback/:bookingId", async(req, res) =>{
     }
 }); // send FeedBack
 
-router.get("/services/:serviceId/reviews", async (req, res) => {
-    try {
-        const { serviceId } = req.params;
 
-        const pageNumber = Math.max(Number(req.query.page) || 1, 1);
-        const limit = 10;
-
-        const { reviews, totalReviews } = await getServiceFeedback(
-            serviceId,
-            pageNumber
-        );
-
-        const totalPages = Math.ceil(totalReviews / limit);
-
-        const hasNextPage = pageNumber < totalPages;
-        const hasPreviousPage = pageNumber > 1;
-
-        return res.status(200).json({
-            currentPage: pageNumber,
-            totalPages,
-            totalReviews,
-            hasNextPage,
-            hasPreviousPage,
-            reviews,
-        });
-
-    } catch (err) {
-        return res.status(500).json({
-            message: "Internal Server Error",
-        });
-    }
-}); // GET /services/123/reviews?page=1
 
 module.exports = router;

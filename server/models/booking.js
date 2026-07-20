@@ -60,6 +60,10 @@ const bookingSchema = new Schema({
     timestamps: true,
 });
 
+bookingSchema.index({ patientId: 1 });
+bookingSchema.index({ caregiverId: 1 });
+bookingSchema.index({ serviceId: 1 });
+
 
 const Booking = mongoose.model('Booking', bookingSchema);
 

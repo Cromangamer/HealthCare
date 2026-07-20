@@ -5,7 +5,7 @@ const User = require("../models/user");
 const Booking = require("../models/booking");
 const ChatRoom = require("../models/chatroom");
 
-router.post("/caregivers", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     // varaibles to store the caregiver details from the request body
     const {
@@ -67,7 +67,7 @@ router.post("/caregivers", async (req, res) => {
   }
 }); // register a new caregiver
 
-router.get("/caregivers/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const caregiverId = req.params.id;
 
@@ -88,7 +88,7 @@ router.get("/caregivers/:id", async (req, res) => {
   }
 }); // get caregiver details by id
 
-router.patch("/caregivers/:id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
   try {
     const caregiverId = req.params.id;
 
@@ -119,7 +119,7 @@ router.patch("/caregivers/:id", async (req, res) => {
   }
 }); // update caregiver details by id
 
-router.delete("/caregivers/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const caregiverId = req.params.id;
 
@@ -147,7 +147,7 @@ router.delete("/caregivers/:id", async (req, res) => {
   }
 }); // delete caregiver by id
 
-router.get("/caregivers/appointments/:caregiverId", async (req, res) => {
+router.get("/appointments/:caregiverId", async (req, res) => {
   try {
     const { caregiverId } = req.params;
     const booking = await Booking.find({ caregiverId })
@@ -176,7 +176,7 @@ router.get("/caregivers/appointments/:caregiverId", async (req, res) => {
   }
 }); // get all booking for caregiver
 
-router.get("/caregivers/appointments/details/:bookingId", async (req, res) => {
+router.get("/appointments/details/:bookingId", async (req, res) => {
   try {
     const { bookingId } = req.params;
 
@@ -219,7 +219,7 @@ router.get("/caregivers/appointments/details/:bookingId", async (req, res) => {
   }
 }); // get booking details for caregiver
 
-router.post("/caregivers/appointments/:bookingId/status", async (req, res) => {
+router.post("/appointments/:bookingId/status", async (req, res) => {
   try {
     const { bookingId } = req.params;
     const { status } = req.body;

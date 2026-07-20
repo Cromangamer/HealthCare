@@ -5,7 +5,7 @@ const Message = require("../models/massage");
 
 const validRoles = ["caregiver", "patient"];
 
-router.post("/chatrooms/:chatRoomId/messages", async (req, res) => {
+router.post("/:chatRoomId/messages", async (req, res) => {
     try {
         const {chatRoomId} = req.params;
         const {
@@ -75,7 +75,7 @@ router.post("/chatrooms/:chatRoomId/messages", async (req, res) => {
 
 });
 
-router.get("/chatrooms/:chatRoomId/messages", async (req, res) => {
+router.get("/:chatRoomId/messages", async (req, res) => {
 
     try {
 

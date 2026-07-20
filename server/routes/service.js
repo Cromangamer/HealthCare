@@ -2,8 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Caregiver = require("../models/caregiver");
 const Service = require("../models/service");
+const {
+  updateFeedback,
+  getServiceFeedback,
+} = require("../helper/feedbackSystem");
 
-router.post("/services", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const {
       caregiverId,
@@ -46,13 +50,11 @@ router.post("/services", async (req, res) => {
     // Save the new service
     await newService.save();
 
-    res
-      .status(201)
-      .json({
-        message: "Service created successfully",
-        service: newService,
-        serviceExperience: 0,
-      });
+    res.status(201).json({
+      message: "Service created successfully",
+      service: newService,
+      serviceExperience: 0,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -62,35 +64,89 @@ router.post("/services", async (req, res) => {
   // PENDING: Implement the logic to calculate totalReviews and totalRating.
 }); // Create service by caregiver
 
-router.get("/services/:id", async (req, res) => {
+router.get("/summary", async (req, res) => {
+  // GET "/services/summary?city=Rajkot"
 
-    // GET /service/2934141dfw32ne2ie2
+  try {
+    const { city } = req.query;
 
-  const serviceID = req.params.id;
+    const result = await Service.aggregate([
+      {
+        $match: {
+          "serviceArea.city": city,
+          isActive: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$serviceType",
+          availableCaregiver: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          serviceType: "$_id",
+          availableCaregiver: 1,
+        },
+      },
+    ]);
 
-  const serviceData = await Service.findById(serviceID).populate({
-    path: "caregiverId",
-    populate: {
-      path: "userId",
-      select: "firstName lastName  profileImage",
-    },
-  });
-
-  if (!serviceData) {
-    return res.status(404).json({ message: " No Service Available ! " });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
   }
+}); // display all types of service in the city
 
-  res.status(200).json(serviceData);
-}); // display One service of caregiver in details
+router.get("/:serviceId/reviews", async (req, res) => {
+  try {
+    const { serviceId } = req.params;
 
-router.get("/services", async (req, res) => {
+    const pageNumber = Math.max(Number(req.query.page) || 1, 1);
+    const limit = 10;
 
-    // GET '/services?city=Rajkot&serviceType=Home Nursing'
+    const { reviews, totalReviews } = await getServiceFeedback(
+      serviceId,
+      pageNumber,
+    );
+
+    const totalPages = Math.ceil(totalReviews / limit);
+
+    const hasNextPage = pageNumber < totalPages;
+    const hasPreviousPage = pageNumber > 1;
+
+    return res.status(200).json({
+      currentPage: pageNumber,
+      totalPages,
+      totalReviews,
+      hasNextPage,
+      hasPreviousPage,
+      reviews,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+}); // GET /services/123/reviews?page=1
+
+router.get("", async (req, res) => {
+  // GET '/services?city=Rajkot&serviceType=Home Nursing'
 
   try {
     const { serviceType, city, state, pincode } = req.query;
 
     const filter = {};
+
+    if (!serviceType && !city && !state && !pincode) {
+      return res.status(400).json({
+        message: "At least one filter is required.",
+      });
+    }
 
     if (serviceType) {
       filter.serviceType = serviceType;
@@ -126,47 +182,24 @@ router.get("/services", async (req, res) => {
   }
 }); // display filtered service with city and types
 
-router.get("/services/summary", async (req, res) => {
+router.get("/:id", async (req, res) => {
+  // GET /service/2934141dfw32ne2ie2
 
-    // GET "/services/summary?city=Rajkot"
-    
-    try {
+  const serviceID = req.params.id;
 
-        const { city } = req.query;
+  const serviceData = await Service.findById(serviceID).populate({
+    path: "caregiverId",
+    populate: {
+      path: "userId",
+      select: "firstName lastName  profileImage",
+    },
+  });
 
-        const result = await Service.aggregate([
-            {
-                $match: {
-                    "serviceArea.city": city,
-                    isActive: true
-                }
-            },
-            {
-                $group: {
-                    _id: "$serviceType",
-                    availableCaregiver: {
-                        $sum: 1
-                    }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    serviceType: "$_id",
-                    availableCaregiver: 1
-                }
-            }
-        ]);
+  if (!serviceData) {
+    return res.status(404).json({ message: " No Service Available ! " });
+  }
 
-        res.json(result);
-
-    } catch (err) {
-
-        res.status(500).json({
-            message: err.message
-        });
-
-    }
-}); // display all types of service in the city
+  res.status(200).json(serviceData);
+}); // display One service of caregiver in details
 
 module.exports = router;

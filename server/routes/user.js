@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 
-router.get("/users/me", async (req, res) => {
+router.get("/me", async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -15,7 +15,7 @@ router.get("/users/me", async (req, res) => {
   }
 }); // get my user profile
 
-router.get("/users/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -28,7 +28,7 @@ router.get("/users/:id", async (req, res) => {
   }
 }); // Get Other User's Profile
 
-router.put("/users/me", async (req, res) => {
+router.put("/me", async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
@@ -45,7 +45,7 @@ router.put("/users/me", async (req, res) => {
   }
 }); // Update My User Profile
 
-router.delete("/users/me", async (req, res) => {
+router.delete("/me", async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.user.id);
     if (!deletedUser) {

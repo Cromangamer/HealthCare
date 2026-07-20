@@ -12,7 +12,7 @@ function CheckPatientID (patient){
 }
 
 
-router.post("/patients", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const {
       userId,
@@ -51,7 +51,7 @@ router.post("/patients", async (req, res) => {
   }
 });
 
-router.get("/patients/:userId", async (req, res) => {
+router.get("/:userId", async (req, res) => {
   try {
     const patient = await Patient.findOne({ userId: req.params.userId });
 
@@ -63,7 +63,7 @@ router.get("/patients/:userId", async (req, res) => {
   }
 });
 
-router.patch("/patients/:patientId", async (req, res) => {
+router.patch("/:patientId", async (req, res) => {
   try {
     const patient = await Patient.findByIdAndUpdate(
       req.params.patientId,
@@ -80,7 +80,7 @@ router.patch("/patients/:patientId", async (req, res) => {
   }
 });
 
-router.post("/patients/:patientId/medical-documents", async (req, res) => {
+router.post("/:patientId/medical-documents", async (req, res) => {
   try {
     const { documentUrls } = req.body;
     const patient = await Patient.findById(req.params.patientId);
@@ -96,7 +96,7 @@ router.post("/patients/:patientId/medical-documents", async (req, res) => {
   }
 });
 
-router.patch("/patients/:patientId/insurance", async (req, res) => {
+router.patch("/:patientId/insurance", async (req, res) => {
     try{
         const patient = await Patient.findById(req.params.patientId);
 

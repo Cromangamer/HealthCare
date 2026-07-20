@@ -144,6 +144,9 @@ serviceSchema.virtual("serviceExperience").get(function () {
 serviceSchema.set("toJSON", { virtuals: true });
 serviceSchema.set("toObject", { virtuals: true });
 
+serviceSchema.index({ caregiverId: 1 });
+serviceSchema.index({ serviceType: 1 });
+
 /*
 {
     "startedOfferingOn": "2022-06-15",

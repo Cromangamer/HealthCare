@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Booking = require("../models/booking")
 
-router.post("/booking", async (req, res) => {
+router.post("/", async (req, res) => {
     try{
         const {
             patientId,
@@ -33,7 +33,7 @@ router.post("/booking", async (req, res) => {
     }
 }); // create booking
 
-router.delete("/booking/:bookingId", async (req, res) =>{
+router.delete("/:bookingId", async (req, res) =>{
     try{
         const { bookingId } = req.params;
         const booking = await Booking.findByIdAndDelete(bookingId);

@@ -1,7 +1,10 @@
+
+
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose'); 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user")
 const patientRoutes = require("./routes/patient");
@@ -15,7 +18,7 @@ const reviewRoutes =require("./routes/review");
 //function to connect to the database
 async function connectToDatabase() {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/healthcare', {
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
