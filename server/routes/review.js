@@ -22,8 +22,8 @@ router.post("/feedback/:bookingId", async(req, res) =>{
             return req.status(404).json({ massage: "Books the service First..."})
         }
 
-        let review = null;
-        review = await Review.findOneAndUpdate(
+        let newReview = null;
+        newReview = await Review.findOneAndUpdate(
             { bookingId },
             { rating, review },
             {
@@ -34,7 +34,7 @@ router.post("/feedback/:bookingId", async(req, res) =>{
 
 
         if (!review) {
-            review = await Review.create({
+            newReview = await Review.create({
                 bookingId: bookingId,
                 patientId: req.user.patientId,
                 caregiverId: booking.caregiverId,
