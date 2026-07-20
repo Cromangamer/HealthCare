@@ -1,30 +1,34 @@
-
-
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose'); 
+const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 3000;
-const authRoutes = require("./routes/auth");
-const userRoutes = require("./routes/user")
-const patientRoutes = require("./routes/patient");
-const caregiverRoutes = require("./routes/caregiver");
-const serviceRoutes = require("./routes/service");
-const bookingRoutes = require("./routes/booking");
-const chatroomRoutes = require("./routes/chatroom");
-const reviewRoutes =require("./routes/review");
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/healthcare';
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+const patientRoutes = require('./routes/patient');
+const caregiverRoutes = require('./routes/caregiver');
+const serviceRoutes = require('./routes/service');
+const bookingRoutes = require('./routes/booking');
+const chatroomRoutes = require('./routes/chatroom');
+const reviewRoutes = require('./routes/review');
 
-
-//function to connect to the database
+// function to connect to the database
 async function connectToDatabase() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
+    if (!process.env.MONGODB_URI && !process.env.MONGO_URI) {
+      console.log('No MongoDB URI provided. Using default local MongoDB URI.');
+    }
+
+    await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+
     console.log('Connected to MongoDB');
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error('Error connecting to MongoDB:', error.message);
+    console.warn('Server will continue running, but database-backed routes will fail until MongoDB is available.');
   }
 }
 

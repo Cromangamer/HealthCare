@@ -14,7 +14,13 @@ router.post("/:chatRoomId/messages", async (req, res) => {
         } = req.body;
         const senderRole = req.user.role;
         const receiverRole = (senderRole === "patient")? "caregiver" : "patient";
+        const chatRoom = await chatRoom.findById(chatRoomId);
 
+        if (!chatRoom) {
+            return res.status(404).json({
+                message: "Chat room not found"
+            });
+        }
         if (!validRoles.includes(senderRole) || !validRoles.includes(receiverRole)) {
             return res.status(400).json({
                 message: "senderRole and receiverRole must be caregiver or patient"

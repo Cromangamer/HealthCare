@@ -57,12 +57,12 @@ const serviceSchema = new Schema({
     serviceArea: [{
         city: String,
         state: String,
-        pincode: String,
+        pincode: Number,
     }],
 
     startedOfferingOn: {
         type: Date,
-        required: true,
+        default: Date.now,
     },
 
     availability: {

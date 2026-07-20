@@ -19,7 +19,6 @@ router.post("/", async (req, res) => {
       serviceMode,
       serviceArea,
       availability,
-      startedOfferingOn = new Date(),
     } = req.body;
 
     // Check if the caregiver exists

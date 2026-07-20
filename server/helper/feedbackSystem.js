@@ -1,3 +1,7 @@
+const Review = require("../models/review");
+const Caregiver = require("../models/caregiver");
+const Service = require("../models/service");
+
 async function updateServiceRating(serviceId) {
   const stats = await Review.aggregate([
     {

@@ -3,7 +3,10 @@ const router = express.Router();
 const Review = require("../models/review");
 const Caregiver = require("../models/caregiver");
 const Booking = require("../models/booking");
-
+const {
+  updateFeedback,
+  getServiceFeedback,
+} = require("../helper/feedbackSystem");
 
 router.post("/feedback/:bookingId", async(req, res) =>{
     try{
@@ -33,7 +36,7 @@ router.post("/feedback/:bookingId", async(req, res) =>{
         );
 
 
-        if (!review) {
+        if (!newReview) {
             newReview = await Review.create({
                 bookingId: bookingId,
                 patientId: req.user.patientId,
@@ -49,6 +52,8 @@ router.post("/feedback/:bookingId", async(req, res) =>{
         return res.status(201).json({ massage: "FeedBack Submit Successfully!"})
 
     } catch (error){
+        console.log(error);
+        
         res.status(500).json({massage: "Internal Server Error"});
     }
 }); // send FeedBack

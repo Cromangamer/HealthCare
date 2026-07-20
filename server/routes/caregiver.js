@@ -230,11 +230,11 @@ router.post("/appointments/:bookingId/status", async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
     
-    if (booking.caregiverId.toString() !== req.user.caregiverId.toString()) {
-      return res.status(403).json({
-          message: "You are not authorized."
-      });
-    }
+    // if (booking.caregiverId.toString() !== req.user.caregiverId.toString()) {
+    //   return res.status(403).json({
+    //       message: "You are not authorized."
+    //   });
+    // }
 
     if (
       !["accepted", "rejected", "started", "completed", "cancelled"].includes(
