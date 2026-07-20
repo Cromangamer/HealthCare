@@ -19,6 +19,7 @@ router.post("/", async (req, res) => {
       serviceMode,
       serviceArea,
       availability,
+      startedOfferingOn = new Date(),
     } = req.body;
 
     // Check if the caregiver exists
@@ -53,7 +54,6 @@ router.post("/", async (req, res) => {
     res.status(201).json({
       message: "Service created successfully",
       service: newService,
-      serviceExperience: 0,
     });
   } catch (error) {
     console.error(error);
@@ -184,22 +184,27 @@ router.get("", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   // GET /service/2934141dfw32ne2ie2
+  try {
+    const serviceID = req.params.id;
 
-  const serviceID = req.params.id;
+    const serviceData = await Service.findById(serviceID).populate({
+      path: "caregiverId",
+      populate: {
+        path: "userId",
+        select: "firstName lastName  profileImage",
+      },
+    });
 
-  const serviceData = await Service.findById(serviceID).populate({
-    path: "caregiverId",
-    populate: {
-      path: "userId",
-      select: "firstName lastName  profileImage",
-    },
-  });
+    if (!serviceData) {
+      return res.status(404).json({ message: " No Service Available ! " });
+    }
 
-  if (!serviceData) {
-    return res.status(404).json({ message: " No Service Available ! " });
+    res.status(200).json(serviceData);
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
-
-  res.status(200).json(serviceData);
 }); // display One service of caregiver in details
 
 module.exports = router;

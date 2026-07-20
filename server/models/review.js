@@ -50,7 +50,10 @@ const reviewSchema = new Schema({
 });
 
 reviewSchema.index({ serviceId: 1 });
+
 reviewSchema.index({ caregiverId: 1 });
+
+reviewSchema.index({ patientId: 1 });
 
 const Review = mongoose.model('Review', reviewSchema);
 module.exports = Review;

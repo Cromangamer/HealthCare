@@ -28,8 +28,6 @@ async function connectToDatabase() {
   }
 }
 
-// Script to connect to the database
-connectToDatabase();
 
 app.use(express.json());
 
@@ -46,6 +44,12 @@ app.use("/reviews", reviewRoutes);
 
 
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+async function startServer() {
+    await connectToDatabase();
+
+    app.listen(port, () => {
+        console.log(`Server is running on http://localhost:${port}`);
+    });
+}
+
+startServer();

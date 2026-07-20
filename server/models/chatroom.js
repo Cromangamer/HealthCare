@@ -34,5 +34,14 @@ const chatRoomSchema = new Schema({
     timestamps: true,
 });
 
+chatRoomSchema.index({
+    patientId: 1,
+    caregiverId: 1
+});
+
+chatRoomSchema.index({
+    bookingId: 1
+});
+
 const ChatRoom = mongoose.model('ChatRoom', chatRoomSchema);
 module.exports = ChatRoom;

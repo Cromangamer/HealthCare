@@ -145,7 +145,22 @@ serviceSchema.set("toJSON", { virtuals: true });
 serviceSchema.set("toObject", { virtuals: true });
 
 serviceSchema.index({ caregiverId: 1 });
+
 serviceSchema.index({ serviceType: 1 });
+
+serviceSchema.index({ isActive: 1 });
+
+serviceSchema.index({
+    "serviceArea.city": 1
+});
+
+serviceSchema.index({
+    "serviceArea.state": 1
+});
+
+serviceSchema.index({
+    "serviceArea.pincode": 1
+});
 
 /*
 {
