@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ChatRoom = require("../models/chatroom");
-const Message = require("../models/massge");
+const Message = require("../models/massage");
 
 const validRoles = ["caregiver", "patient"];
 

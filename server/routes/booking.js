@@ -31,12 +31,12 @@ router.post("/booking", async (req, res) => {
     catch ( error ) {
         res.status(500).json({ message: "Internal Server Error" });
     }
-});
+}); // create booking
 
 router.delete("/booking/:bookingId", async (req, res) =>{
     try{
         const { bookingId } = req.params;
-        const existbooking = await Booking.findByIdAndDelete(bookingId);
+        const booking = await Booking.findByIdAndDelete(bookingId);
 
         if (!booking) {
             return res.status(404).json({
@@ -53,6 +53,6 @@ router.delete("/booking/:bookingId", async (req, res) =>{
         res.status(500).json({ message: "Internal Server Error" });
     }
 
-})
+}) // delete booking
 
 module.exports = router;

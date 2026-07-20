@@ -89,6 +89,8 @@ router.post("/patients/:patientId/medical-documents", async (req, res) => {
 
     patient.medicalDocuments.push(...documentUrls);
 
+    patient.save();
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -102,6 +104,8 @@ router.patch("/patients/:patientId/insurance", async (req, res) => {
 
         patient.insurance.isinsured = true;
 
+        patient.save();
+        
     } catch (error){
 
     }

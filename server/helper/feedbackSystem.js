@@ -82,6 +82,7 @@ async function getServiceFeedback(serviceId, pageNumber = 1) {
   };
 }
 
-module.exports = getServiceFeedback;
-
-module.exports = updateFeedback;
+module.exports = {
+    updateFeedback,
+    getServiceFeedback,
+};

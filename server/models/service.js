@@ -60,6 +60,11 @@ const serviceSchema = new Schema({
         pincode: String,
     }],
 
+    startedOfferingOn: {
+        type: Date,
+        required: true,
+    },
+
     availability: {
         monday: {
             available: { type: Boolean, default: false },
@@ -122,7 +127,7 @@ const serviceSchema = new Schema({
 
 serviceSchema.virtual("serviceExperience").get(function () {
     const today = new Date();
-    const start = new Date(this.serviceStartDate);
+    const start = new Date(this.startedOfferingOn);
 
     let years = today.getFullYear() - start.getFullYear();
 
@@ -141,7 +146,7 @@ serviceSchema.set("toObject", { virtuals: true });
 
 /*
 {
-    "serviceStartDate": "2022-06-15",
+    "startedOfferingOn": "2022-06-15",
     "serviceExperience": 4
 }
 */
