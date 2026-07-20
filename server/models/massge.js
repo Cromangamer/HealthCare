@@ -8,16 +8,20 @@ const messageSchema = new Schema({
         required: true,
     },
 
-    senderId: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+    sender: {
+        role: String,
+        enum: [
+            "caregiver",
+            "patient"
+        ]
     },
 
-    receiverId: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+    receiver: {
+        role: String,
+        enum: [
+            "caregiver",
+            "patient"
+        ]
     },
 
     message: {
@@ -28,13 +32,16 @@ const messageSchema = new Schema({
 
     attachments: [{
         url: String,
-        fileName: String,
-        fileType: String,
     }],
 
     isSeen: {
         type: Boolean,
         default: false,
+    },
+
+    seenAt: {
+        type: Date,
+        default: null
     }
 
 }, {

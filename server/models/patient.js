@@ -26,6 +26,7 @@ const patientSchema = new Schema({
             "AB+","AB-",
             "O+","O-"
         ],
+        default: null,
     },
 
     height: Number, // cm
@@ -68,18 +69,14 @@ const patientSchema = new Schema({
         country: String,
     },
 
-    location: {
-        latitude: Number,
-        longitude: Number,
-    },
-
     medicalDocuments: [{
         type: String, // Cloudinary URL
+        
     }],
 
     profileCompleted: {
         type: Boolean,
-        default: false,
+        default: true,
     }
 
 }, {

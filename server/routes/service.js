@@ -60,7 +60,7 @@ router.post("/services", async (req, res) => {
 
   // PENDING: Implement the logic to calculate serviceExperience.
   // PENDING: Implement the logic to calculate totalReviews and totalRating.
-});
+}); // Create service by caregiver
 
 router.get("/services/:id", async (req, res) => {
 
@@ -81,7 +81,7 @@ router.get("/services/:id", async (req, res) => {
   }
 
   res.status(200).json(serviceData);
-});
+}); // display One service of caregiver in details
 
 router.get("/services", async (req, res) => {
 
@@ -124,7 +124,7 @@ router.get("/services", async (req, res) => {
       message: "Internal Server Error",
     });
   }
-});
+}); // display filtered service with city and types
 
 router.get("/services/summary", async (req, res) => {
 
@@ -167,5 +167,6 @@ router.get("/services/summary", async (req, res) => {
         });
 
     }
-});
+}); // display all types of service in the city
 
+module.exports = router;

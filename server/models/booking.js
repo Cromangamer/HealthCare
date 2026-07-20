@@ -20,11 +20,6 @@ const bookingSchema = new Schema({
         required: true,
     },
 
-    bookingDate: {
-        type: Date,
-        required: true,
-    },
-
     status: {
         type: String,
         enum: [
@@ -60,12 +55,6 @@ const bookingSchema = new Schema({
         enum: ["cash"],
         default: "cash",
     },
-
-    paymentStatus: {
-        type: String,
-        enum: ["pending", "paid"],
-        default: "pending",
-    }
 
 }, {
     timestamps: true,
