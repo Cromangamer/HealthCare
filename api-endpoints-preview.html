@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend API Endpoints</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      color: #222;
+      background: #f8fafc;
+    }
+    h1 {
+      margin-bottom: 16px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    th, td {
+      border: 1px solid #dbe2ea;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+    th {
+      background: #e2e8f0;
+    }
+    code {
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .method {
+      font-weight: bold;
+      color: #0f766e;
+    }
+  </style>
+</head>
+<body>
+  <h1>Backend API Endpoints</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Method</th>
+        <th>URL</th>
+        <th>Authentication Required</th>
+        <th>Request Body</th>
+        <th>Query Params</th>
+        <th>Response</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/auth/register</td>
+        <td>No</td>
+        <td><code>firstName</code>, <code>lastName</code>, <code>email</code>, <code>phone</code>, <code>password</code></td>
+        <td>—</td>
+        <td><code>201</code> with created user summary</td>
+        <td>Register a new user</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/auth/login</td>
+        <td>No</td>
+        <td><code>email</code>, <code>password</code></td>
+        <td>—</td>
+        <td><code>200</code> with login success and user summary</td>
+        <td>Authenticate user credentials</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/bookings</td>
+        <td>No</td>
+        <td><code>patientId</code>, <code>serviceId</code>, <code>caregiverId</code></td>
+        <td>—</td>
+        <td><code>201</code> with success message</td>
+        <td>Create a booking</td>
+      </tr>
+      <tr>
+        <td><span class="method">DELETE</span></td>
+        <td>/bookings/:bookingId</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code>/<code>404</code> with delete result</td>
+        <td>Delete a booking</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/caregivers</td>
+        <td>No</td>
+        <td><code>userId</code>, <code>qualification</code>, <code>specialization</code>, <code>languages</code>, <code>certificates</code>, <code>aadhaarNumber</code>, <code>licenseNumber</code>, <code>bio</code>, <code>location</code></td>
+        <td>—</td>
+        <td><code>201</code> with caregiver document</td>
+        <td>Register a caregiver profile</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/caregivers/:id</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with caregiver profile</td>
+        <td>Get caregiver by ID</td>
+      </tr>
+      <tr>
+        <td><span class="method">PATCH</span></td>
+        <td>/caregivers/:id</td>
+        <td>No</td>
+        <td>Partial caregiver update fields</td>
+        <td>—</td>
+        <td><code>200</code> with updated caregiver</td>
+        <td>Update caregiver profile</td>
+      </tr>
+      <tr>
+        <td><span class="method">DELETE</span></td>
+        <td>/caregivers/:id</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with success message</td>
+        <td>Delete caregiver profile</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/caregivers/appointments/:caregiverId</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with bookings for that caregiver</td>
+        <td>List bookings for a caregiver</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/caregivers/appointments/details/:bookingId</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with booking details and optional chat room</td>
+        <td>Get booking details for caregiver</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/caregivers/appointments/:bookingId/status</td>
+        <td>No</td>
+        <td><code>status</code></td>
+        <td>—</td>
+        <td><code>200</code>/<code>400</code>/<code>403</code> with booking update result</td>
+        <td>Change booking status</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/chatrooms/:chatRoomId/messages</td>
+        <td>No</td>
+        <td><code>message</code>, <code>attachments</code></td>
+        <td>—</td>
+        <td><code>201</code> with created message</td>
+        <td>Send a message in a chat room</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/chatrooms/:chatRoomId/messages</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with chat messages</td>
+        <td>Fetch chat history</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/patients</td>
+        <td>No</td>
+        <td><code>userId</code>, <code>dateOfBirth</code>, <code>gender</code>, <code>bloodGroup</code>, <code>height</code>, <code>weight</code>, <code>emergencyContacts</code>, <code>address</code></td>
+        <td>—</td>
+        <td><code>201</code> with created patient profile</td>
+        <td>Create a patient profile</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/patients/:userId</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with patient profile</td>
+        <td>Get patient profile by user ID</td>
+      </tr>
+      <tr>
+        <td><span class="method">PATCH</span></td>
+        <td>/patients/:patientId</td>
+        <td>No</td>
+        <td>Partial patient update fields</td>
+        <td>—</td>
+        <td><code>200</code> with updated patient profile</td>
+        <td>Update patient profile</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/patients/:patientId/medical-documents</td>
+        <td>No</td>
+        <td><code>documentUrls</code></td>
+        <td>—</td>
+        <td><code>200</code>/<code>500</code> with result</td>
+        <td>Add medical documents</td>
+      </tr>
+      <tr>
+        <td><span class="method">PATCH</span></td>
+        <td>/patients/:patientId/insurance</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code>/<code>500</code> with result</td>
+        <td>Mark insurance as active</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/reviews/feedback/:bookingId</td>
+        <td>No</td>
+        <td><code>rating</code>, <code>review</code></td>
+        <td>—</td>
+        <td><code>201</code> with feedback success</td>
+        <td>Submit review/feedback for a booking</td>
+      </tr>
+      <tr>
+        <td><span class="method">POST</span></td>
+        <td>/services</td>
+        <td>No</td>
+        <td><code>caregiverId</code>, <code>serviceType</code>, <code>description</code>, <code>priceType</code>, <code>price</code>, <code>duration</code>, <code>serviceMode</code>, <code>serviceArea</code>, <code>availability</code></td>
+        <td>—</td>
+        <td><code>201</code> with created service</td>
+        <td>Create a service</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/services/summary</td>
+        <td>No</td>
+        <td>—</td>
+        <td><code>city</code></td>
+        <td><code>200</code> with grouped service summary</td>
+        <td>Get service counts by type for a city</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/services/:serviceId/reviews</td>
+        <td>No</td>
+        <td>—</td>
+        <td><code>page</code></td>
+        <td><code>200</code> with paginated reviews</td>
+        <td>Get reviews for a service</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/services</td>
+        <td>No</td>
+        <td>—</td>
+        <td><code>serviceType</code>, <code>city</code>, <code>state</code>, <code>pincode</code></td>
+        <td><code>200</code> with matching services</td>
+        <td>List services with filters</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/services/:id</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with one service document</td>
+        <td>Get a single service by ID</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/users/me</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with current user</td>
+        <td>Get current user profile</td>
+      </tr>
+      <tr>
+        <td><span class="method">GET</span></td>
+        <td>/users/:id</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with user profile</td>
+        <td>Get user by ID</td>
+      </tr>
+      <tr>
+        <td><span class="method">PUT</span></td>
+        <td>/users/me</td>
+        <td>No</td>
+        <td>Partial user update fields</td>
+        <td>—</td>
+        <td><code>200</code> with updated user</td>
+        <td>Update current user</td>
+      </tr>
+      <tr>
+        <td><span class="method">DELETE</span></td>
+        <td>/users/me</td>
+        <td>No</td>
+        <td>—</td>
+        <td>—</td>
+        <td><code>200</code> with delete success</td>
+        <td>Delete current user</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
