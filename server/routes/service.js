@@ -67,12 +67,13 @@ router.get("/summary", async (req, res) => {
   // GET "/services/summary?city=Rajkot"
 
   try {
-    const { city } = req.query;
+    const { city,state } = req.query;
 
     const result = await Service.aggregate([
       {
         $match: {
           "serviceArea.city": city,
+          "serviceArea.state" : state,
           isActive: true,
         },
       },
