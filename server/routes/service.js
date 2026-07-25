@@ -69,13 +69,21 @@ router.get("/summary", async (req, res) => {
   try {
     const { city,state } = req.query;
 
+    const match = {
+      isActive : true,
+    };
+
+    if (city){
+      match["serviceArea.city"] = city;
+    }
+
+    if(state){
+      match["serviceArea.state"] = state;
+    }
+
     const result = await Service.aggregate([
       {
-        $match: {
-          "serviceArea.city": city,
-          "serviceArea.state" : state,
-          isActive: true,
-        },
+        $match: match,
       },
       {
         $group: {
