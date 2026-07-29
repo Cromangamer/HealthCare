@@ -10,6 +10,9 @@ import Blog from "./pages/Blog.jsx"
 import About from "./pages/About.jsx"
 import Contact from "./pages/Contact.jsx"
 import ServiceType from './pages/ServiceType.jsx'
+import Login from './pages/Login.jsx'
+import RequireAuth from './components/RequireAuth.jsx'
+
 
 const router = createBrowserRouter([
   {
@@ -44,6 +47,18 @@ const router = createBrowserRouter([
       {
         path: "service/:Type",
         element: <ServiceType />
+      },
+      {
+        path: "signin",
+        element: <Login />
+      },
+      {
+        path: "booking",
+        element: (
+            <RequireAuth>
+                {/* <Booking /> */}
+            </RequireAuth>
+        )
       }
     ]
   },

@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../firebase/auth";
+import { userLogout } from "../features/auth/firebaseLogin";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, firstName, lastName, profileImage } = useSelector(
+    (state) => state.firebaseLogin,
+  );
 
+  const fullName = firstName + ' ' + lastName;
   const links = [
     { label: "Home", to: "/" },
     { label: "Services", to: "/services" },
@@ -13,6 +23,14 @@ function Navbar() {
     { label: "Contact", to: "/contact" },
   ];
 
+
+
+  const handlerLogout = async () => {
+    await logout();
+    dispatch(userLogout());
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-soft backdrop-blur-xl transition-colors duration-300">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -21,7 +39,9 @@ function Navbar() {
             <i className="fas fa-heart-pulse" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-lg font-semibold tracking-tight text-slate-900">Care24</p>
+            <p className="text-lg font-semibold tracking-tight text-slate-900">
+              Care24
+            </p>
             <p className="text-sm text-slate-500">Healthcare made human</p>
           </div>
         </Link>
@@ -45,18 +65,40 @@ function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            to="/signin"
-            className="care24-btn care24-btn--ghost rounded-full px-4 py-2 text-sm font-semibold"
-          >
-            Sign In
-          </Link>
-          <Link
-            to="/get-started"
-            className="care24-btn care24-btn--primary rounded-full px-4 py-2 text-sm font-semibold"
-          >
-            Get Started
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              to="/profile"
+              className="group flex items-center gap-3 rounded-full border border-slate-200/80 bg-white/80 px-2 py-1.5 shadow-sm transition duration-200 hover:border-sky-200 hover:bg-sky-50 hover:shadow-md"
+            >
+              <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white bg-gradient-to-br from-sky-600 to-cyan-500 text-sm font-semibold text-white shadow-sm">
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt={fullName || "Profile"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span>
+                    {(fullName?.trim()?.charAt(0) || "U").toUpperCase()}
+                  </span>
+                )}
+              </div>
+
+              <div className="text-left">
+                <p className="text-sm font-semibold text-slate-900">
+                  {fullName || "Profile"}
+                </p>
+                <p className="text-xs text-slate-500">View profile</p>
+              </div>
+            </Link>
+          ) : (
+            <Link
+              to="/signin"
+              className="care24-btn care24-btn--ghost rounded-full px-5 py-2 text-sm font-semibold"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
 
         <button
@@ -66,7 +108,15 @@ function Navbar() {
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((prev) => !prev)}
         >
-          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            className="h-6 w-6"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             {menuOpen ? (
               <path d="M6 18L18 6M6 6l12 12" />
             ) : (

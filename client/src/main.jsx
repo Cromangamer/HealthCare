@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from './app/store'
+import AuthInit  from "./components/AuthInitializer"
 
 
 import "./index.css";
@@ -12,7 +13,9 @@ import router from "./router";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <AuthInit>
+        <RouterProvider router={router} />
+      </AuthInit>
     </Provider>
   </StrictMode>
 );

@@ -2,13 +2,14 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 
-
 function ServiceType(){
-    return(
-        <>
-        
-        </>
-    );
+
+
+
+  return (
+    <>
+    </>
+  );
 }
 
 export default ServiceType;
