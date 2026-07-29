@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Booking = require("../models/booking")
+const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 
-router.post("/", async (req, res) => {
+router.post("/", verifyFirebaseToken, async (req, res) => {
     try{
         const {
             patientId,
@@ -33,7 +34,7 @@ router.post("/", async (req, res) => {
     }
 }); // create booking
 
-router.delete("/:bookingId", async (req, res) =>{
+router.delete("/:bookingId", verifyFirebaseToken, async (req, res) =>{
     try{
         const { bookingId } = req.params;
         const booking = await Booking.findByIdAndDelete(bookingId);

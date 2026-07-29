@@ -4,9 +4,11 @@ const User = require("../models/user");
 
 const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 const authController = require("../controllers/authController");
+const {authLimiter} = require("../middleware/rateLimiter");
 
 router.post(
     "/firebase-login",
+    authLimiter,
     verifyFirebaseToken,
     authController.firebaseLogin
 );

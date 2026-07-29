@@ -4,8 +4,9 @@ const Caregiver = require("../models/caregiver");
 const User = require("../models/user");
 const Booking = require("../models/booking");
 const ChatRoom = require("../models/chatroom");
+const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 
-router.post("/", async (req, res) => {
+router.post("/", verifyFirebaseToken, async (req, res) => {
   try {
     // varaibles to store the caregiver details from the request body
     const {
@@ -88,7 +89,7 @@ router.get("/:id", async (req, res) => {
   }
 }); // get caregiver details by id
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", verifyFirebaseToken, async (req, res) => {
   try {
     const caregiverId = req.params.id;
 
@@ -119,7 +120,7 @@ router.patch("/:id", async (req, res) => {
   }
 }); // update caregiver details by id
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyFirebaseToken, async (req, res) => {
   try {
     const caregiverId = req.params.id;
 
