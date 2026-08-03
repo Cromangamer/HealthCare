@@ -1,26 +1,55 @@
 import { auth } from "./config";
-import { signOut } from "firebase/auth";
 import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithRedirect,
+  getRedirectResult,
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  signOut,
 } from "firebase/auth";
 
 let confirmationResult = null;
-const googleProvider = new GoogleAuthProvider();
 
+const googleProvider = new GoogleAuthProvider();
 
 export const signInWithGoogle = async () => {
   try {
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    let result;
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
     if (isMobile) {
-      result = await signInWithRedirect(auth, googleProvider);
-    } else {
-      result = await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
+
+      // Redirect starts here.
+      // AuthInit will continue after the user returns.
+      return;
     }
+
+    const result = await signInWithPopup(auth, googleProvider);
+
+    const token = await result.user.getIdToken();
+
+    return {
+      success: true,
+      user: result.user,
+      token,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const handleRedirectResult = async () => {
+  try {
+    const result = await getRedirectResult(auth);
+
+    if (!result) {
+      return null;
+    }
+
     const token = await result.user.getIdToken();
 
     return {
@@ -44,14 +73,14 @@ export const sendOTP = async (phoneNumber) => {
         "recaptcha-container",
         {
           size: "invisible",
-        },
+        }
       );
     }
 
     confirmationResult = await signInWithPhoneNumber(
       auth,
       phoneNumber,
-      window.recaptchaVerifier,
+      window.recaptchaVerifier
     );
 
     return {
@@ -76,6 +105,7 @@ export const verifyOTP = async (otp) => {
 
     const result = await confirmationResult.confirm(otp);
     confirmationResult = null;
+
     const token = await result.user.getIdToken();
 
     return {
@@ -105,4 +135,3 @@ export const logout = async () => {
     };
   }
 };
- 
