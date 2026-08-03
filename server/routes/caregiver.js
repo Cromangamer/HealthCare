@@ -5,8 +5,9 @@ const User = require("../models/user");
 const Booking = require("../models/booking");
 const ChatRoom = require("../models/chatroom");
 const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
+const uploadImage = require("../middleware/uploadImage");
 
-router.post("/", verifyFirebaseToken, async (req, res) => {
+router.post("/", verifyFirebaseToken, uploadImage, async (req, res) => {
   try {
     // varaibles to store the caregiver details from the request body
     const {
@@ -14,7 +15,6 @@ router.post("/", verifyFirebaseToken, async (req, res) => {
       qualification,
       specialization,
       languages,
-      certificates,
       aadhaarNumber,
       licenseNumber,
       bio,
@@ -22,12 +22,18 @@ router.post("/", verifyFirebaseToken, async (req, res) => {
     } = req.body;
 
     const user = await User.findById(userId);
-
+    console.log("req.body:", req.body);
+    console.log("userId:", req.body.userId);
     // condition to check if the user exists in the database
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    const certificates = req.files.map((file) => ({
+      name: file.originalname,
+      url: file.path,
+      uploadedAt: new Date(),
+    }));
 
     // condition to check if the user is already registered as a caregiver
 
@@ -74,7 +80,7 @@ router.get("/:id", async (req, res) => {
 
     const caregiver = await Caregiver.findById(caregiverId).populate(
       "userId",
-      "-password",
+      "firstName lastName email phone profileImage",
     ); // populate user details in the caregiver output
 
     if (!caregiver) {
@@ -177,7 +183,7 @@ router.get("/appointments/:caregiverId", async (req, res) => {
   }
 }); // get all booking for caregiver
 
-router.get("/appointments/details/:bookingId", async (req, res) => {
+router.get("/appointments/details/:bookingId", verifyFirebaseToken, async (req, res) => {
   try {
     const { bookingId } = req.params;
 
@@ -220,7 +226,7 @@ router.get("/appointments/details/:bookingId", async (req, res) => {
   }
 }); // get booking details for caregiver
 
-router.post("/appointments/:bookingId/status", async (req, res) => {
+router.post("/appointments/:bookingId/status", verifyFirebaseToken, async (req, res) => {
   try {
     const { bookingId } = req.params;
     const { status } = req.body;

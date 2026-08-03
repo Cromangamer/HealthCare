@@ -12,7 +12,11 @@ import Contact from "./pages/Contact.jsx"
 import ServiceType from './pages/ServiceType.jsx'
 import Login from './pages/Login.jsx'
 import RequireAuth from './components/RequireAuth.jsx'
-
+import Profile from './pages/Profile.jsx'
+import PatientForm from './pages/PatientForm.jsx'
+import CaregiverForm from './pages/CaregiverForm.jsx'
+import CaregiverDashboard from './pages/CaregiverDashboard.jsx'
+import PatientDashboard from './pages/PatientDashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -59,6 +63,38 @@ const router = createBrowserRouter([
                 {/* <Booking /> */}
             </RequireAuth>
         )
+      },
+      {
+        path: "profile",
+        element: (
+          <RequireAuth>
+            <Profile />
+          </RequireAuth>
+        )
+      },
+      {
+        path: "bePatient",
+        element: (
+          <RequireAuth>
+            <PatientForm />
+          </RequireAuth>
+        )
+      },
+      {
+        path: "beCaregiver",
+        element: (
+          <RequireAuth>
+            <CaregiverForm />
+          </RequireAuth>
+        )
+      },
+      {
+        path: "CaregiverDashboard",
+        element: <CaregiverDashboard />
+      },
+      {
+        path: "PatientDashboard",
+        element: <PatientDashboard />
       }
     ]
   },
@@ -71,7 +107,8 @@ const router = createBrowserRouter([
             element: <AdminDashboard />
         }
     ]
-  }
+  },
+  
 ])
 
 export default router;

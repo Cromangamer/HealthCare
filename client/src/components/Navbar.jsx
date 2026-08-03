@@ -13,7 +13,7 @@ function Navbar() {
     (state) => state.firebaseLogin,
   );
 
-  const fullName = firstName + ' ' + lastName;
+  const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Profile";
   const links = [
     { label: "Home", to: "/" },
     { label: "Services", to: "/services" },
@@ -23,6 +23,29 @@ function Navbar() {
     { label: "Contact", to: "/contact" },
   ];
 
+  let menuLinks = []
+  if (isAuthenticated){
+    menuLinks = [
+      { label: "Profile", to: "/profile"},
+      { label: "Home", to: "/" },
+      { label: "Services", to: "/services" },
+      { label: "Caregivers", to: "/caregivers" },
+      { label: "About Us", to: "/about" },
+      { label: "Blog", to: "/blog" },
+      { label: "Contact", to: "/contact" },
+    ];
+  } else {
+    menuLinks = [
+      { label: "Home", to: "/" },
+      { label: "Services", to: "/services" },
+      { label: "Caregivers", to: "/caregivers" },
+      { label: "About Us", to: "/about" },
+      { label: "Blog", to: "/blog" },
+      { label: "Contact", to: "/contact" },
+    ];
+  }
+
+
 
 
   const handlerLogout = async () => {
@@ -30,6 +53,9 @@ function Navbar() {
     dispatch(userLogout());
     navigate("/");
   };
+
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-soft backdrop-blur-xl transition-colors duration-300">
@@ -66,31 +92,37 @@ function Navbar() {
 
         <div className="hidden items-center gap-3 lg:flex">
           {isAuthenticated ? (
-            <Link
-              to="/profile"
-              className="group flex items-center gap-3 rounded-full border border-slate-200/80 bg-white/80 px-2 py-1.5 shadow-sm transition duration-200 hover:border-sky-200 hover:bg-sky-50 hover:shadow-md"
-            >
-              <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white bg-gradient-to-br from-sky-600 to-cyan-500 text-sm font-semibold text-white shadow-sm">
-                {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt={fullName || "Profile"}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span>
-                    {(fullName?.trim()?.charAt(0) || "U").toUpperCase()}
-                  </span>
-                )}
-              </div>
+            <>
+              <Link
+                to="/profile"
+                className="group flex items-center gap-3 rounded-full border border-slate-200/80 bg-white/80 px-2 py-1.5 shadow-sm transition duration-200 hover:border-sky-200 hover:bg-sky-50 hover:shadow-md"
+              >
+                <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white bg-gradient-to-br from-sky-600 to-cyan-500 text-sm font-semibold text-white shadow-sm">
+                  {profileImage ? (
+                    <img
+                      src={profileImage}
+                      alt={fullName}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span>{fullName.charAt(0).toUpperCase()}</span>
+                  )}
+                </div>
 
-              <div className="text-left">
-                <p className="text-sm font-semibold text-slate-900">
-                  {fullName || "Profile"}
-                </p>
-                <p className="text-xs text-slate-500">View profile</p>
-              </div>
-            </Link>
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-slate-900">{fullName}</p>
+                  <p className="text-xs text-slate-500">View profile</p>
+                </div>
+              </Link>
+
+              <button
+                type="button"
+                onClick={handlerLogout}
+                className="care24-btn care24-btn--ghost rounded-full px-4 py-2 text-sm font-semibold"
+              >
+                Log Out
+              </button>
+            </>
           ) : (
             <Link
               to="/signin"
@@ -101,38 +133,62 @@ function Navbar() {
           )}
         </div>
 
-        <button
-          type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-soft transition hover:border-slate-300 hover:bg-slate-50 lg:hidden"
-          aria-label="Toggle navigation menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((prev) => !prev)}
-        >
-          <svg
-            className="h-6 w-6"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            {menuOpen ? (
-              <path d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <>
-                <path d="M4 8h16" />
-                <path d="M4 16h16" />
-              </>
-            )}
-          </svg>
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          {isAuthenticated ? (
+            <button
+              type="button"
+              className="inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-soft transition hover:border-slate-300 hover:bg-slate-50"
+              aria-label="Toggle navigation menu"
+              aria-expanded={menuOpen}
+              onClick={toggleMenu}
+            >
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt={fullName}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center bg-gradient-to-br from-sky-600 to-cyan-500 text-sm font-semibold text-white">
+                  {fullName.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-soft transition hover:border-slate-300 hover:bg-slate-50"
+              aria-label="Toggle navigation menu"
+              aria-expanded={menuOpen}
+              onClick={toggleMenu}
+            >
+              <svg
+                className="h-6 w-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {menuOpen ? (
+                  <path d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <>
+                    <path d="M4 8h16" />
+                    <path d="M4 16h16" />
+                  </>
+                )}
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {menuOpen && (
         <div className="border-t border-slate-200 bg-white/98 px-4 pb-4 pt-2 shadow-soft lg:hidden">
           <div className="space-y-2">
-            {links.map((link) => (
+            {menuLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
@@ -150,20 +206,27 @@ function Navbar() {
             ))}
           </div>
           <div className="mt-4 flex flex-col gap-3">
-            <Link
-              to="/signin"
-              onClick={() => setMenuOpen(false)}
-              className="care24-btn care24-btn--ghost rounded-full px-4 py-2 text-sm font-semibold"
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/get-started"
-              onClick={() => setMenuOpen(false)}
-              className="care24-btn care24-btn--primary rounded-full px-4 py-2 text-sm font-semibold"
-            >
-              Get Started
-            </Link>
+            {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => {
+                  closeMenu();
+                  handlerLogout();
+                }}
+                className="care24-btn care24-btn--ghost rounded-full px-4 py-2 text-sm font-semibold"
+              >
+                Log Out
+              </button>
+        
+            ) : (
+              <Link
+                to="/signin"
+                onClick={closeMenu}
+                className="care24-btn care24-btn--ghost rounded-full px-4 py-2 text-sm font-semibold"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
         </div>
       )}

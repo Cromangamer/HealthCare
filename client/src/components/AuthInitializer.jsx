@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { userLogin } from "../api/login";
 import { userLogout } from "../features/auth/firebaseLogin";
+import Loading from "./Loading";
 
 function AuthInit({children}) {
   const dispatch = useDispatch();
@@ -35,6 +36,10 @@ function AuthInit({children}) {
     // Cleanup when component unmounts
     return () => unsubscribe();
   }, [dispatch]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return children;
 }
