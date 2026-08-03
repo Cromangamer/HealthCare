@@ -21,7 +21,13 @@ function AuthInit({children}) {
     }
     async function finishRedirect() {
       try {
-        await getRedirectResult(auth);
+        const result = await getRedirectResult(auth);
+
+        console.log("Redirect Result:", result);
+
+        if (result?.user) {
+          console.log("Redirect User:", result.user);
+}
       } catch (error) {
         console.error("Redirect Error:", error);
       }
@@ -30,6 +36,7 @@ function AuthInit({children}) {
     finishRedirect();
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log("Auth State:", firebaseUser);
       if (firebaseUser) {
         try {
           const idToken = await firebaseUser.getIdToken();
