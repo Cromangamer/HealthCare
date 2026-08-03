@@ -20,7 +20,7 @@ export const signInWithGoogle = async () => {
       result = await signInWithRedirect(auth, provider);
     } else {
       result = await signInWithPopup(auth, provider);
-  
+    }
     const token = await result.user.getIdToken();
 
     return {
