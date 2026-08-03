@@ -18,11 +18,8 @@ export const userLogin = createAsyncThunk(
         }
       );
       console.log("7. Response received", response.data);
-      // return response.data.user;
+      return response.data.user;
 
-      return thunkAPI.rejectWithValue(
-        err.response?.data || err.message
-      );
     } catch (err) {
       console.error("8. Axios failed", err);
       return thunkAPI.rejectWithValue(err.response?.data);
