@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, getRedirectResult } from "firebase/auth";
 
 import { auth } from "../firebase/config";
 import { userLogin } from "../api/login";
@@ -19,6 +19,15 @@ function AuthInit({children}) {
       dispatch(userLogout());
       return undefined;
     }
+    async function finishRedirect() {
+      try {
+        await getRedirectResult(auth);
+      } catch (error) {
+        console.error("Redirect Error:", error);
+      }
+    }
+
+    finishRedirect();
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {

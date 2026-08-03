@@ -22,7 +22,9 @@ export const signInWithGoogle = async () => {
 
       // Redirect starts here.
       // AuthInit will continue after the user returns.
-      return;
+      return{
+        success: true,
+      };
     }
 
     const result = await signInWithPopup(auth, googleProvider);
