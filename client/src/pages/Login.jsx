@@ -2,9 +2,7 @@ import { useState } from "react";
 import { signInWithGoogle, sendOTP, verifyOTP } from "../firebase/auth";
 import { useDispatch } from "react-redux";
 import { userLogin } from "../api/login";
-import { useNavigate , useLocation } from "react-router-dom";
-
-
+import { useNavigate, useLocation } from "react-router-dom";
 
 function GoogleIcon() {
   return (
@@ -45,13 +43,12 @@ function Login() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
-
 
   const handleSendOTP = async () => {
     if (!phoneNumber.trim()) {
@@ -96,43 +93,48 @@ function Login() {
     setIsSubmitting(false);
   };
 
-const handleGoogleLogin = async () => {
-  setIsSubmitting(true);
-  const result = await signInWithGoogle();
-  console.log("Google Result:", result);
-  if (!result.success) {
-    alert(result.error || "Google sign-in is unavailable right now.");
-    setIsSubmitting(false);
-    return;
-  }
+  const handleGoogleLogin = async () => {
+    setIsSubmitting(true);
+    const result = await signInWithGoogle();
+    console.log("Google Result:", result);
+    if (!result.success) {
+      alert(result.error || "Google sign-in is unavailable right now.");
+      setIsSubmitting(false);
+      return;
+    }
 
-  try {
-    console.log("Dispatching login...");
-    const user= await dispatch(userLogin(result.token)).unwrap();
-    console.log("Backend returned:", user);
-    navigate(from, { replace: true });
-  } catch (error) {
-    console.error("Google login failed", error);
-    alert("Login failed. Please try again in a moment.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    try {
+      console.log("Dispatching login...");
+      const user = await dispatch(userLogin(result.token)).unwrap();
+      console.log("Backend returned:", user);
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Google login failed", error);
+      alert("Login failed. Please try again in a moment.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="care24-page min-h-screen bg-transparent px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <section className="care24-card care24-card--elevated overflow-hidden rounded-[2rem] p-6 sm:p-8 lg:p-10">
-          <span className="care24-badge care24-badge--success">Secure sign-in</span>
+          <span className="care24-badge care24-badge--success">
+            Secure sign-in
+          </span>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             Welcome back to Care24
           </h1>
           <p className="mt-3 max-w-xl text-base leading-7 text-slate-600">
-            Sign in quickly with your Google account or your phone number to continue booking trusted care services.
+            Sign in quickly with your Google account or your phone number to
+            continue booking trusted care services.
           </p>
 
           <div className="mt-8 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5">
-            <p className="text-sm font-semibold text-slate-700">Why patients choose Care24</p>
+            <p className="text-sm font-semibold text-slate-700">
+              Why patients choose Care24
+            </p>
             <ul className="mt-3 space-y-2 text-sm text-slate-600">
               <li>• Verified caregivers and fast booking</li>
               <li>• Support for home care, nursing, and consultations</li>
@@ -151,11 +153,13 @@ const handleGoogleLogin = async () => {
           >
             <GoogleIcon />
             Continue with Google
-          </button> 
+          </button>
 
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-sm font-medium text-slate-500">or continue with phone</span>
+            <span className="text-sm font-medium text-slate-500">
+              or continue with phone
+            </span>
             <div className="h-px flex-1 bg-slate-200" />
           </div>
 
@@ -173,7 +177,11 @@ const handleGoogleLogin = async () => {
             </div>
           </label>
 
-          <button onClick={handleSendOTP} disabled={isSubmitting} className="care24-btn care24-btn--primary mt-4 w-full disabled:cursor-not-allowed disabled:opacity-70">
+          <button
+            onClick={handleSendOTP}
+            disabled={isSubmitting}
+            className="care24-btn care24-btn--primary mt-4 w-full disabled:cursor-not-allowed disabled:opacity-70"
+          >
             {isSubmitting ? "Processing..." : "Send OTP"}
           </button>
 
@@ -190,7 +198,11 @@ const handleGoogleLogin = async () => {
                 />
               </label>
 
-              <button onClick={handleVerifyOTP} disabled={isSubmitting} className="care24-btn care24-btn--secondary w-full disabled:cursor-not-allowed disabled:opacity-70">
+              <button
+                onClick={handleVerifyOTP}
+                disabled={isSubmitting}
+                className="care24-btn care24-btn--secondary w-full disabled:cursor-not-allowed disabled:opacity-70"
+              >
                 {isSubmitting ? "Verifying..." : "Verify OTP"}
               </button>
             </div>
