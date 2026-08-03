@@ -107,7 +107,9 @@ const handleGoogleLogin = async () => {
   }
 
   try {
-    await dispatch(userLogin(result.token)).unwrap();
+    console.log("Dispatching login...");
+    const user= await dispatch(userLogin(result.token)).unwrap();
+    console.log("Backend returned:", user);
     navigate(from, { replace: true });
   } catch (error) {
     console.error("Google login failed", error);

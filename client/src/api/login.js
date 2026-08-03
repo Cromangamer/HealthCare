@@ -6,6 +6,7 @@ export const userLogin = createAsyncThunk(
   "login/userLogin",
   async (idToken, thunkAPI) => {
     try {
+      console.log("Sending token to backend");
       const response = await axios.post(
         `${apiBaseUrl}/auth/firebase-login`,
         {},
@@ -15,7 +16,7 @@ export const userLogin = createAsyncThunk(
           },
         }
       );
-
+      console.log("Backend response:", response.data);
       return response.data.user;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data);
