@@ -99,7 +99,7 @@ function Login() {
 const handleGoogleLogin = async () => {
   setIsSubmitting(true);
   const result = await signInWithGoogle();
-
+  console.log("Google Result:", result);
   if (!result.success) {
     alert(result.error || "Google sign-in is unavailable right now.");
     setIsSubmitting(false);

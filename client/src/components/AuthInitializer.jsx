@@ -39,7 +39,9 @@ function AuthInit({children}) {
       console.log("Auth State:", firebaseUser);
       if (firebaseUser) {
         try {
+          console.log("UID:", firebaseUser.uid);
           const idToken = await firebaseUser.getIdToken();
+          console.log("Token:", idToken.substring(0, 20));
           dispatch(userLogin(idToken));
         } catch (error) {
           console.error("Authentication failed:", error);
