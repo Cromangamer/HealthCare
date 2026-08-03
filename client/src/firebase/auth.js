@@ -15,6 +15,8 @@ const googleProvider = new GoogleAuthProvider();
 
 export const signInWithGoogle = async () => {
   try {
+    
+    setPersistence(auth, browserLocalPersistence);
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     console.log(navigator.userAgent);
     console.log("Is Mobile:", isMobile);
