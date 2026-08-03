@@ -8,6 +8,7 @@ import {
   signInWithPhoneNumber,
   signOut,
 } from "firebase/auth";
+import {browserLocalPersistence,  setPersistence,} from "firebase/auth";
 
 let confirmationResult = null;
 
