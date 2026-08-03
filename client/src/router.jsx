@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import UserLayout from "./layouts/UserLayout.jsx"
 import AdminLayout from "./layouts/AdminLayout.jsx"
@@ -6,6 +5,7 @@ import Home from "./pages/Home.jsx"
 import Services from "./pages/Services.jsx"
 import Caregivers from "./pages/Caregivers.jsx"
 import AdminDashboard from "./pages/AdminDashboard.jsx"
+import AdminServices from "./pages/AdminServices.jsx"
 import Blog from "./pages/Blog.jsx"
 import About from "./pages/About.jsx"
 import Contact from "./pages/Contact.jsx"
@@ -16,7 +16,12 @@ import Profile from './pages/Profile.jsx'
 import PatientForm from './pages/PatientForm.jsx'
 import CaregiverForm from './pages/CaregiverForm.jsx'
 import CaregiverDashboard from './pages/CaregiverDashboard.jsx'
+import CaregiverServices from './pages/CaregiverServices.jsx'
 import PatientDashboard from './pages/PatientDashboard.jsx'
+import Booking from './pages/Booking.jsx'
+import Bookings from './pages/Bookings.jsx'
+import Chat from './pages/Chat.jsx'
+import RequireRole from './components/RequireRole.jsx'
 
 const router = createBrowserRouter([
   {
@@ -60,7 +65,7 @@ const router = createBrowserRouter([
         path: "booking",
         element: (
             <RequireAuth>
-                {/* <Booking /> */}
+                <Booking />
             </RequireAuth>
         )
       },
@@ -90,21 +95,37 @@ const router = createBrowserRouter([
       },
       {
         path: "CaregiverDashboard",
-        element: <CaregiverDashboard />
+        element: <RequireAuth><CaregiverDashboard /></RequireAuth>
+      },
+      {
+        path: "caregiver-services",
+        element: <RequireAuth><CaregiverServices /></RequireAuth>
       },
       {
         path: "PatientDashboard",
-        element: <PatientDashboard />
+        element: <RequireAuth><PatientDashboard /></RequireAuth>
+      },
+      {
+        path: "bookings",
+        element: <RequireAuth><Bookings /></RequireAuth>
+      },
+      {
+        path: "chat",
+        element: <RequireAuth><Chat /></RequireAuth>
       }
     ]
   },
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: <RequireRole role="admin"><AdminLayout /></RequireRole>,
     children: [
         {
             path: "",
             element: <AdminDashboard />
+        },
+        {
+            path: "services",
+            element: <AdminServices />
         }
     ]
   },

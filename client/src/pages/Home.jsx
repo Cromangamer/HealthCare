@@ -1,10 +1,15 @@
-import React from "react";
+import { Link } from "react-router-dom";
+import { serviceCatalog } from "../data/serviceCatalog";
 
 function Home(){
-    return (
-        <>
-        </>
-    )
+  return <main className="care24-page overflow-hidden">
+    <section className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:px-8 lg:py-20">
+      <div><span className="care24-badge care24-badge--success">Trusted care, close to home</span><h1 className="mt-5 max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">Care that helps your family feel <span className="text-primary">at ease.</span></h1><p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Find compassionate home healthcare, elderly support, nursing, and recovery services—matched to your needs and location.</p><div className="mt-8 flex flex-wrap gap-3"><Link to="/services" className="care24-btn care24-btn--primary">Find care near you</Link><Link to="/caregivers" className="care24-btn care24-btn--ghost">Meet caregivers</Link></div><div className="mt-10 flex flex-wrap gap-7 text-sm"><div><p className="text-2xl font-bold text-slate-900">24/7</p><p className="text-slate-500">Care coordination</p></div><div><p className="text-2xl font-bold text-slate-900">Verified</p><p className="text-slate-500">Care professionals</p></div><div><p className="text-2xl font-bold text-slate-900">Personal</p><p className="text-slate-500">Support plans</p></div></div></div>
+      <div className="care24-card care24-card--elevated relative p-5 sm:p-7"><div className="rounded-[1.5rem] bg-gradient-to-br from-blue-600 via-primary to-secondary p-7 text-white sm:p-10"><p className="text-sm font-semibold uppercase tracking-[.18em] text-blue-100">Your care journey</p><h2 className="mt-3 text-3xl font-semibold">A calmer way to arrange support.</h2><div className="mt-8 space-y-3">{["Tell us what support you need","Choose a nearby care service","Book with confidence"].map((item, i)=><div key={item} className="flex items-center gap-3 rounded-2xl bg-white/15 p-4 backdrop-blur"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm font-bold text-primary">{i+1}</span><span className="font-medium">{item}</span></div>)}</div></div></div>
+    </section>
+    <section className="bg-white py-16"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><span className="care24-badge">Care designed around you</span><h2 className="mt-3 text-3xl font-semibold text-slate-900">Support for every stage of care</h2></div><Link to="/services" className="text-sm font-semibold text-primary">View all services →</Link></div><div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{serviceCatalog.map(s=><article key={s.serviceType} className="care24-card p-6"><span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-xl font-bold text-primary">{s.icon}</span><h3 className="mt-5 text-lg font-semibold text-slate-900">{s.serviceType}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{s.summary}</p></article>)}</div></div></section>
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"><div className="care24-card grid gap-8 p-8 md:grid-cols-3"><div><p className="text-3xl font-bold text-primary">10,000+</p><p className="mt-1 text-sm text-slate-600">Families supported</p></div><div><p className="text-3xl font-bold text-primary">4.8/5</p><p className="mt-1 text-sm text-slate-600">Average family rating</p></div><div><p className="text-3xl font-bold text-primary">100%</p><p className="mt-1 text-sm text-slate-600">Carefully screened partners</p></div></div></section>
+  </main>
 }
 
 export default Home;

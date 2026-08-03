@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { apiBaseUrl } from "../api/config";
 
 const SERVICE_CATALOG = [
   {
@@ -57,9 +60,27 @@ function ServiceType() {
   const { Type } = useParams();
   const navigate = useNavigate();
   const selectedCity = useSelector((state) => state.ServiceLocation.selectedCity);
+  const [providers, setProviders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const decodedType = decodeURIComponent(Type || "");
   const service = SERVICE_CATALOG.find((item) => item.serviceType === decodedType);
+
+  useEffect(() => {
+    if (!service || !selectedCity) return undefined;
+    let active = true;
+    async function loadProviders() {
+      setLoading(true);
+      try {
+        const response = await axios.get(`${apiBaseUrl}/services`, { params: { serviceType: service.serviceType, city: selectedCity.name, state: selectedCity.state } });
+        if (active) { setProviders(response.data.services || []); setError(""); }
+      } catch { if (active) setError("We couldn’t load available providers right now."); }
+      finally { if (active) setLoading(false); }
+    }
+    loadProviders();
+    return () => { active = false; };
+  }, [selectedCity, service]);
 
   if (!service) {
     return (
@@ -131,12 +152,10 @@ function ServiceType() {
 
           <div className="care24-card p-6">
             <h2 className="text-lg font-semibold text-slate-900">Next step</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              Continue to booking to confirm the care plan that fits your family’s needs.
-            </p>
-            <button className="care24-btn care24-btn--primary mt-5">Continue booking</button>
+            <p className="mt-3 text-sm leading-7 text-slate-600">Choose an available provider below to continue your booking.</p>
           </div>
         </section>
+        <section className="care24-card p-6 sm:p-8"><div className="flex items-center justify-between gap-4"><div><h2 className="text-xl font-semibold text-slate-900">Available providers</h2><p className="mt-1 text-sm text-slate-600">Live availability for this service and location.</p></div>{selectedCity && <span className="care24-badge">{selectedCity.name}</span>}</div>{!selectedCity ? <div className="care24-empty mt-5">Select a city on the services page to see providers.</div> : error ? <div className="care24-alert care24-alert--error mt-5">{error}</div> : loading ? <div className="mt-5 grid gap-4 md:grid-cols-2">{[1, 2].map((item) => <div key={item} className="care24-skeleton h-32" />)}</div> : providers.length ? <div className="mt-5 grid gap-4 md:grid-cols-2">{providers.map((provider) => { const user = provider.caregiverId?.userId || {}; const name = `${user.firstName || "Care"} ${user.lastName || "Professional"}`; return <article key={provider._id} className="rounded-[1.5rem] border border-slate-200 p-5"><p className="font-semibold text-slate-900">{name}</p><p className="mt-1 text-sm text-slate-600">{provider.description}</p><div className="mt-4 flex items-center justify-between"><span className="text-sm font-semibold text-slate-800">₹{provider.price} / {provider.priceType.replace("_", " ")}</span><button onClick={() => navigate("/booking", { state: { service: provider } })} className="care24-btn care24-btn--primary">Book care</button></div></article>; })}</div> : <div className="care24-empty mt-5">No providers are currently available for this location.</div>}</section>
       </div>
     </div>
   );

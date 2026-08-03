@@ -4,14 +4,14 @@ const Caregiver = require("../models/caregiver");
 const User = require("../models/user");
 const Booking = require("../models/booking");
 const ChatRoom = require("../models/chatroom");
-const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
+const { authenticate } = require("../middleware/authenticate");
 const uploadImage = require("../middleware/uploadImage");
+const escapeRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-router.post("/", verifyFirebaseToken, uploadImage, async (req, res) => {
+router.post("/", authenticate, uploadImage, async (req, res) => {
   try {
     // varaibles to store the caregiver details from the request body
     const {
-      userId,
       qualification,
       specialization,
       languages,
@@ -21,15 +21,14 @@ router.post("/", verifyFirebaseToken, uploadImage, async (req, res) => {
       location,
     } = req.body;
 
-    const user = await User.findById(userId);
-    console.log("req.body:", req.body);
-    console.log("userId:", req.body.userId);
+    const userId = req.user._id;
+    const user = req.user;
     // condition to check if the user exists in the database
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const certificates = req.files.map((file) => ({
+    const certificates = (req.files || []).map((file) => ({
       name: file.originalname,
       url: file.path,
       uploadedAt: new Date(),
@@ -74,6 +73,28 @@ router.post("/", verifyFirebaseToken, uploadImage, async (req, res) => {
   }
 }); // register a new caregiver
 
+router.get("/", async (req, res) => {
+  try {
+    const { search, specialization, page = 1, limit = 12 } = req.query;
+    const filter = {};
+    if (specialization) filter.specialization = new RegExp(escapeRegex(specialization), "i");
+    if (search) {
+      const safeSearch = new RegExp(escapeRegex(search), "i");
+      const users = await User.find({ $or: [{ firstName: safeSearch }, { lastName: safeSearch }] }).select("_id");
+      filter.userId = { $in: users.map((user) => user._id) };
+    }
+    const safeLimit = Math.min(Math.max(Number(limit) || 12, 1), 50);
+    const safePage = Math.max(Number(page) || 1, 1);
+    const [caregivers, total] = await Promise.all([
+      Caregiver.find(filter).populate("userId", "firstName lastName profileImage").sort({ isVerified: -1, createdAt: -1 }).skip((safePage - 1) * safeLimit).limit(safeLimit),
+      Caregiver.countDocuments(filter),
+    ]);
+    res.json({ caregivers, pagination: { page: safePage, limit: safeLimit, total, totalPages: Math.ceil(total / safeLimit) } });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 router.get("/:id", async (req, res) => {
   try {
     const caregiverId = req.params.id;
@@ -95,11 +116,16 @@ router.get("/:id", async (req, res) => {
   }
 }); // get caregiver details by id
 
-router.patch("/:id", verifyFirebaseToken, async (req, res) => {
+router.patch("/:id", authenticate, async (req, res) => {
   try {
     const caregiverId = req.params.id;
 
-    const updateData = req.body;
+    const fields = ["qualification", "specialization", "languages", "aadhaarNumber", "licenseNumber", "bio", "location", "totalexperience", "isAvailable"];
+    const updateData = Object.fromEntries(fields.filter((field) => req.body[field] !== undefined).map((field) => [field, req.body[field]]));
+
+    const currentCaregiver = await Caregiver.findById(caregiverId);
+    if (!currentCaregiver) return res.status(404).json({ message: "Caregiver not found" });
+    if (req.user.role !== "admin" && !currentCaregiver.userId.equals(req.user._id)) return res.status(403).json({ message: "You can only edit your own caregiver profile" });
 
     // update caregiver details by id
 
@@ -126,9 +152,13 @@ router.patch("/:id", verifyFirebaseToken, async (req, res) => {
   }
 }); // update caregiver details by id
 
-router.delete("/:id", verifyFirebaseToken, async (req, res) => {
+router.delete("/:id", authenticate, async (req, res) => {
   try {
     const caregiverId = req.params.id;
+
+    const caregiver = await Caregiver.findById(caregiverId);
+    if (!caregiver) return res.status(404).json({ message: "Caregiver not found" });
+    if (req.user.role !== "admin" && !caregiver.userId.equals(req.user._id)) return res.status(403).json({ message: "You can only delete your own caregiver profile" });
 
     const deletedCaregiver = await Caregiver.findByIdAndDelete(caregiverId);
 
@@ -153,147 +183,5 @@ router.delete("/:id", verifyFirebaseToken, async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }); // delete caregiver by id
-
-router.get("/appointments/:caregiverId", async (req, res) => {
-  try {
-    const { caregiverId } = req.params;
-    const booking = await Booking.find({ caregiverId })
-      .sort({ createdAt: -1 }) // newest
-      .populate({
-        path: "patientId",
-        populate: {
-          path: "userId",
-          select: "firstName lastName",
-        },
-      })
-      .populate({
-        path: "serviceId",
-        select: "serviceType serviceMode serviceArea",
-      });
-
-    if (booking.length === 0) {
-      return res.status(404).json({
-        message: "No bookings found",
-      });
-    }
-
-    res.status(200).json({ message: "Here Your Booking all...", booking });
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error!" });
-  }
-}); // get all booking for caregiver
-
-router.get("/appointments/details/:bookingId", verifyFirebaseToken, async (req, res) => {
-  try {
-    const { bookingId } = req.params;
-
-    const booking = await Booking.findById(bookingId)
-      .populate({
-        path: "patientId",
-        select: " -profileCompleted -createdAt -updatedAt ",
-        populate: {
-          path: "userId",
-          select: "_id firstName lastName email phone profileImage",
-        },
-      })
-      .populate({
-        path: "serviceId",
-        select: "serviceType serviceMode serviceArea",
-      })
-      .lean();
-
-    if (!booking) {
-      return res.status(404).json({
-        message: "Booking not found.",
-      });
-    }
-
-    let chatRoom = null;
-    if (["accepted", "started", "completed"].includes(booking.status)) {
-      chatRoom = await ChatRoom.findOne({
-        bookingId: booking._id,
-      });
-    }
-
-    return res.status(200).json({
-      message: "Booking details fetched successfully.",
-      booking,
-      chatRoom,
-    });
-    // PENDING: msg , all other info
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error!" });
-  }
-}); // get booking details for caregiver
-
-router.post("/appointments/:bookingId/status", verifyFirebaseToken, async (req, res) => {
-  try {
-    const { bookingId } = req.params;
-    const { status } = req.body;
-
-    const booking = await Booking.findById(bookingId).orFail();
-
-    if (!booking) {
-      return res.status(404).json({ message: "Booking not found" });
-    }
-    
-    // if (booking.caregiverId.toString() !== req.user.caregiverId.toString()) {
-    //   return res.status(403).json({
-    //       message: "You are not authorized."
-    //   });
-    // }
-
-    if (
-      !["accepted", "rejected", "started", "completed", "cancelled"].includes(
-        status,
-      )
-    ) {
-      return res.status(400).json({ message: "Invalid status value" });
-    }
-    const allowedTransitions = {
-      pending: ["accepted", "rejected", "cancelled"],
-      accepted: ["started", "cancelled"],
-      started: ["completed"],
-      completed: [],
-      rejected: [],
-      cancelled: [],
-    };
-    if (!allowedTransitions[booking.status].includes(status)) {
-      return res.status(400).json({
-        message: "Invalid status transition.",
-      });
-    }
-    if (booking.status === status) {
-      return res.status(400).json({ message: `Booking is already ${status}` });
-    }
-
-    // If status is pending to accepted then create a chatroom for the booking
-    if (booking.status === "pending" && status === "accepted") {
-      const exists = await ChatRoom.findOne({ bookingId: booking._id });
-      if (!exists) {
-        await ChatRoom.create({
-          bookingId: booking._id,
-          patientId: booking.patientId,
-          caregiverId: booking.caregiverId,
-        });
-      }
-    } else if (booking.status === "accepted" && status === "rejected") {
-      const exists = await ChatRoom.findOne({ bookingId: booking._id });
-      if (exists) {
-        await ChatRoom.findOneAndDelete({
-          bookingId: booking._id,
-        });
-      }
-    }
-    booking.status = status;
-    await booking.save();
-    return res.status(200).json({
-      message: `Booking ${status} successfully.`,
-      booking,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error!" });
-  }
-}); // any status change route
 
 module.exports = router;

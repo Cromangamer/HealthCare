@@ -1,12 +1,13 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { apiBaseUrl } from "./config";
 
 export const userLogin = createAsyncThunk(
   "login/userLogin",
   async (idToken, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/auth/firebase-login",
+        `${apiBaseUrl}/auth/firebase-login`,
         {},
         {
           headers: {

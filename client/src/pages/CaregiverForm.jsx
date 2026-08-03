@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { createCaregiver } from "../api/caregiver";
 
 const initialState = {
   userId: "",
@@ -25,6 +26,7 @@ function CaregiverForm() {
   const [specializationInput, setSpecializationInput] = useState("");
   const [languageInput, setLanguageInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userId = useSelector((state) => state.firebaseLogin._id);
@@ -87,6 +89,13 @@ function CaregiverForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setMessage("");
+
+    if (!userId) {
+      setMessage("Please sign in again before creating your caregiver profile.");
+      setIsSubmitting(false);
+      return;
+    }
 
     const data = new FormData();
     data.append("userId", userId);
@@ -108,7 +117,7 @@ function CaregiverForm() {
       navigate("/CaregiverDashboard");
     } catch (err) {
       console.error(err);
-      alert("Failed to create caregiver profile.");
+      setMessage("Failed to create caregiver profile. Please try again in a moment.");
     } finally {
       setIsSubmitting(false);
     }
@@ -203,6 +212,7 @@ function CaregiverForm() {
 
           <form onSubmit={handleSubmit} className="care24-card rounded-[2rem] p-6 sm:p-8">
             <div className="space-y-4">
+              {message && <div className="care24-alert care24-alert--error">{message}</div>}
               {renderTagField(
                 "Qualification",
                 "qualification",

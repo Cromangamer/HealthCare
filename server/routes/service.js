@@ -1,218 +1,25 @@
 const express = require("express");
-const router = express.Router();
-const Caregiver = require("../models/caregiver");
 const Service = require("../models/service");
-const {
-  updateFeedback,
-  getServiceFeedback,
-} = require("../helper/feedbackSystem");
+const { authenticate } = require("../middleware/authenticate");
+const service = require("../controllers/serviceController");
+const { getServiceFeedback } = require("../helper/feedbackSystem");
+const router = express.Router();
 
-router.post("/", async (req, res) => {
-  try {
-    const {
-      caregiverId,
-      serviceType,
-      description,
-      priceType,
-      price,
-      duration,
-      serviceMode,
-      serviceArea,
-      availability,
-    } = req.body;
+router.get("/summary", service.summary);
+router.get("/", service.list);
+router.post("/", authenticate, service.create);
+router.get("/:id/reviews", async (req, res, next) => { try { const page = Math.max(Number(req.query.page) || 1, 1); const { reviews, totalReviews } = await getServiceFeedback(req.params.id, page); res.json({ currentPage: page, totalPages: Math.ceil(totalReviews / 10), totalReviews, hasNextPage: page * 10 < totalReviews, hasPreviousPage: page > 1, reviews }); } catch (error) { next(error); } });
+router.get("/:id", service.getOne);
+router.patch("/:id", authenticate, service.update);
+router.delete("/:id", authenticate, service.remove);
 
-    // Check if the caregiver exists
-    const caregiver = await Caregiver.findById(caregiverId);
-    if (!caregiver) {
-      return res.status(404).json({ message: "Caregiver not found" });
-    }
-    // Check if this service already exists for the caregiver
-    const existingService = await Service.findOne({ caregiverId, serviceType });
-    if (existingService) {
-      return res
-        .status(400)
-        .json({ message: "Service already exists for this caregiver" });
-    }
+router.get("/admin/services", authenticate, service.listAdmin);
+router.post("/admin/services", authenticate, service.createAdmin);
+router.patch("/admin/services/:id", authenticate, service.updateAdmin);
+router.delete("/admin/services/:id", authenticate, service.removeAdmin);
 
-    // Create a new service
-    const newService = new Service({
-      caregiverId,
-      serviceType,
-      description,
-      priceType,
-      price,
-      duration,
-      serviceMode,
-      serviceArea,
-      availability,
-    });
-
-    // Save the new service
-    await newService.save();
-
-    res.status(201).json({
-      message: "Service created successfully",
-      service: newService,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-
-  // PENDING: Implement the logic to calculate serviceExperience.
-  // PENDING: Implement the logic to calculate totalReviews and totalRating.
-}); // Create service by caregiver
-
-router.get("/summary", async (req, res) => {
-  // GET "/services/summary?city=Rajkot"
-
-  try {
-    const { city,state } = req.query;
-
-    const match = {
-      isActive : true,
-    };
-
-    if (city){
-      match["serviceArea.city"] = city;
-    }
-
-    if(state){
-      match["serviceArea.state"] = state;
-    }
-
-    const result = await Service.aggregate([
-      {
-        $match: match,
-      },
-      {
-        $group: {
-          _id: "$serviceType",
-          availableCaregiver: {
-            $sum: 1,
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          serviceType: "$_id",
-          availableCaregiver: 1,
-        },
-      },
-    ]);
-
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
-  }
-}); // display all types of service in the city
-
-router.get("/:serviceId/reviews", async (req, res) => {
-  try {
-    const { serviceId } = req.params;
-
-    const pageNumber = Math.max(Number(req.query.page) || 1, 1);
-    const limit = 10;
-
-    const { reviews, totalReviews } = await getServiceFeedback(
-      serviceId,
-      pageNumber,
-    );
-
-    const totalPages = Math.ceil(totalReviews / limit);
-
-    const hasNextPage = pageNumber < totalPages;
-    const hasPreviousPage = pageNumber > 1;
-
-    return res.status(200).json({
-      currentPage: pageNumber,
-      totalPages,
-      totalReviews,
-      hasNextPage,
-      hasPreviousPage,
-      reviews,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
-}); // GET /services/123/reviews?page=1
-
-router.get("", async (req, res) => {
-  // GET '/services?city=Rajkot&serviceType=Home Nursing'
-
-  try {
-    const { serviceType, city, state, pincode } = req.query;
-
-    const filter = {};
-
-    if (!serviceType && !city && !state && !pincode) {
-      return res.status(400).json({
-        message: "At least one filter is required.",
-      });
-    }
-
-    if (serviceType) {
-      filter.serviceType = serviceType;
-    }
-
-    if (city) {
-      filter["serviceArea.city"] = city;
-    }
-
-    if (state) {
-      filter["serviceArea.state"] = state;
-    }
-
-    if (pincode) {
-      filter["serviceArea.pincode"] = pincode;
-    }
-
-    const services = await Service.find(filter).populate({
-      path: "caregiverId",
-      populate: {
-        path: "userId",
-        select: "firstName lastName profileImage",
-      },
-    });
-
-    res.status(200).json(services);
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
-}); // display filtered service with city and types
-
-router.get("/:id", async (req, res) => {
-  // GET /service/2934141dfw32ne2ie2
-  try {
-    const serviceID = req.params.id;
-
-    const serviceData = await Service.findById(serviceID).populate({
-      path: "caregiverId",
-      populate: {
-        path: "userId",
-        select: "firstName lastName  profileImage",
-      },
-    });
-
-    if (!serviceData) {
-      return res.status(404).json({ message: " No Service Available ! " });
-    }
-
-    res.status(200).json(serviceData);
-  } catch (error) {
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
-}); // display One service of caregiver in details
-
+router.get("/caregiver/services", authenticate, service.listCaregiver);
+router.post("/caregiver/services", authenticate, service.createCaregiver);
+router.put("/caregiver/services/:id", authenticate, service.updateCaregiver);
+router.delete("/caregiver/services/:id", authenticate, service.removeCaregiver);
 module.exports = router;

@@ -1,12 +1,18 @@
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import getToken from "../firebase/getToken";
+import { apiBaseUrl } from "../api/config";
 
 function PatientForm(){
-
-    return(
-        <>
-        </>
-    );
-
+  const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [form, setForm] = useState({ dateOfBirth: "", gender: "", bloodGroup: "", height: "", weight: "", emergencyName: "", emergencyRelation: "", emergencyPhone: "", city: "", state: "", pincode: "" });
+  function update(event) { setForm({ ...form, [event.target.name]: event.target.value }); }
+  async function submit(event) { event.preventDefault(); setSaving(true); setMessage(""); try { const token = await getToken(); if (!token) { setMessage("Please sign in again to continue."); return; } await axios.post(`${apiBaseUrl}/patients`, { dateOfBirth: form.dateOfBirth, gender: form.gender, bloodGroup: form.bloodGroup || undefined, height: Number(form.height) || undefined, weight: Number(form.weight) || undefined, emergencyContacts: form.emergencyName ? [{ name: form.emergencyName, relation: form.emergencyRelation, phone: form.emergencyPhone }] : [], address: { city: form.city, state: form.state, pincode: form.pincode } }, { headers: { Authorization: `Bearer ${token}` } }); navigate("/PatientDashboard"); } catch (error) { setMessage(error.response?.data?.message || "We couldn’t save your profile. Please try again."); } finally { setSaving(false); } }
+  return <main className="care24-page mx-auto min-h-screen max-w-4xl px-4 py-8 sm:px-6 lg:px-8"><section className="care24-card care24-card--elevated rounded-[2rem] p-7 sm:p-9"><span className="care24-badge care24-badge--success">Patient profile</span><h1 className="mt-3 text-3xl font-semibold text-slate-900">Help us tailor your care</h1><p className="mt-2 leading-7 text-slate-600">These details help coordinate safer, more suitable care. You can update them later.</p>{message && <div className="care24-alert care24-alert--error mt-5">{message}</div>}<form onSubmit={submit} className="care24-form mt-7"><div className="grid gap-4 sm:grid-cols-2"><label className="care24-form__label">Date of birth<input required type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={update} className="care24-input" /></label><label className="care24-form__label">Gender<select required name="gender" value={form.gender} onChange={update} className="care24-input"><option value="">Select gender</option><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></label><label className="care24-form__label">Blood group<select name="bloodGroup" value={form.bloodGroup} onChange={update} className="care24-input"><option value="">Not specified</option>{["A+","A-","B+","B-","AB+","AB-","O+","O-"].map(value => <option key={value}>{value}</option>)}</select></label><label className="care24-form__label">Height (cm)<input name="height" inputMode="numeric" value={form.height} onChange={update} className="care24-input" /></label></div><div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5"><h2 className="font-semibold text-slate-900">Emergency contact</h2><div className="mt-4 grid gap-4 sm:grid-cols-3"><input name="emergencyName" value={form.emergencyName} onChange={update} className="care24-input" placeholder="Name" /><input name="emergencyRelation" value={form.emergencyRelation} onChange={update} className="care24-input" placeholder="Relation" /><input name="emergencyPhone" value={form.emergencyPhone} onChange={update} className="care24-input" placeholder="Phone number" /></div></div><div className="grid gap-4 sm:grid-cols-3"><label className="care24-form__label">City<input name="city" value={form.city} onChange={update} className="care24-input" /></label><label className="care24-form__label">State<input name="state" value={form.state} onChange={update} className="care24-input" /></label><label className="care24-form__label">Pincode<input name="pincode" value={form.pincode} onChange={update} className="care24-input" /></label></div><button disabled={saving} className="care24-btn care24-btn--primary justify-self-start">{saving ? "Saving profile…" : "Save patient profile"}</button></form></section></main>;
 }
 
 

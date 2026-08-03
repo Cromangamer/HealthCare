@@ -30,24 +30,21 @@ const caregiverSlice = createSlice({
                 Object.assign(state, action.payload);
                 state.loading = false;
             })
-            .addCase(createCaregiver.rejected, (state, action) => {
-                console.log(action.payload);
+            .addCase(createCaregiver.rejected, (state) => {
                 state.loading = false;
             })
             .addCase(updateCaregiver.fulfilled, (state, action) => {
                 Object.assign(state, action.payload);
                 state.loading = false;
             })
-            .addCase(updateCaregiver.rejected, (state, action) => {
-                console.log(action.payload);
+            .addCase(updateCaregiver.rejected, (state) => {
                 state.loading = false;
             })
             .addCase(getCaregiver.fulfilled, (state, action) => {
                 Object.assign(state, action.payload);
                 state.loading = false;
             })
-            .addCase(getCaregiver.rejected, (state, action) => {
-                console.log(action.payload);
+            .addCase(getCaregiver.rejected, (state) => {
                 state.loading = false;
             });
     },

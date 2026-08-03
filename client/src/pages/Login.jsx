@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { signInWithGoogle, sendOTP, verifyOTP } from "../firebase/auth";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userLogin } from "../api/login";
 import { useNavigate , useLocation } from "react-router-dom";
 
@@ -44,6 +44,7 @@ function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -53,6 +54,12 @@ function Login() {
 
 
   const handleSendOTP = async () => {
+    if (!phoneNumber.trim()) {
+      alert("Please enter a phone number first.");
+      return;
+    }
+
+    setIsSubmitting(true);
     const formattedNumber = phoneNumber.startsWith("+91")
       ? phoneNumber
       : `+91${phoneNumber}`;
@@ -61,41 +68,52 @@ function Login() {
     if (result.success) {
       setOtpSent(true);
       alert("OTP sent successfully!");
-    } else if (result.error.includes("billing-not-enabled")) {
+    } else if (result.error?.includes("billing-not-enabled")) {
       alert(
         "We're currently experiencing technical issues with phone login. Please continue with Google.",
       );
-      return;
     } else {
-      alert(result.error);
+      alert(result.error || "Unable to send OTP right now.");
     }
+    setIsSubmitting(false);
   };
 
   const handleVerifyOTP = async () => {
+    setIsSubmitting(true);
     const result = await verifyOTP(otp);
 
     if (result.success) {
-      console.log(result);
-      alert("Phone login successful!");
+      try {
+        await dispatch(userLogin(result.token)).unwrap();
+        navigate(from, { replace: true });
+      } catch (error) {
+        console.error("Phone login failed", error);
+        alert("Login failed. Please try again in a moment.");
+      }
     } else {
-      alert(result.error);
+      alert(result.error || "Unable to verify OTP.");
     }
+    setIsSubmitting(false);
   };
 
 const handleGoogleLogin = async () => {
+  setIsSubmitting(true);
   const result = await signInWithGoogle();
 
   if (!result.success) {
-    alert(result.error);
+    alert(result.error || "Google sign-in is unavailable right now.");
+    setIsSubmitting(false);
     return;
   }
 
   try {
     await dispatch(userLogin(result.token)).unwrap();
-
     navigate(from, { replace: true });
-  } catch (err) {
-    alert("Login failed");
+  } catch (error) {
+    console.error("Google login failed", error);
+    alert("Login failed. Please try again in a moment.");
+  } finally {
+    setIsSubmitting(false);
   }
 };
 
@@ -126,7 +144,8 @@ const handleGoogleLogin = async () => {
 
           <button
             onClick={handleGoogleLogin}
-            className="care24-btn care24-btn--ghost flex w-full items-center justify-center gap-3 rounded-[1rem] border-slate-200 bg-white py-3"
+            disabled={isSubmitting}
+            className="care24-btn care24-btn--ghost flex w-full items-center justify-center gap-3 rounded-[1rem] border-slate-200 bg-white py-3 disabled:cursor-not-allowed disabled:opacity-70"
           >
             <GoogleIcon />
             Continue with Google
@@ -152,8 +171,8 @@ const handleGoogleLogin = async () => {
             </div>
           </label>
 
-          <button onClick={handleSendOTP} className="care24-btn care24-btn--primary mt-4 w-full">
-            Send OTP
+          <button onClick={handleSendOTP} disabled={isSubmitting} className="care24-btn care24-btn--primary mt-4 w-full disabled:cursor-not-allowed disabled:opacity-70">
+            {isSubmitting ? "Processing..." : "Send OTP"}
           </button>
 
           {otpSent && (
@@ -169,8 +188,8 @@ const handleGoogleLogin = async () => {
                 />
               </label>
 
-              <button onClick={handleVerifyOTP} className="care24-btn care24-btn--secondary w-full">
-                Verify OTP
+              <button onClick={handleVerifyOTP} disabled={isSubmitting} className="care24-btn care24-btn--secondary w-full disabled:cursor-not-allowed disabled:opacity-70">
+                {isSubmitting ? "Verifying..." : "Verify OTP"}
               </button>
             </div>
           )}

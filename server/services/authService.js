@@ -12,13 +12,13 @@ exports.firebaseLogin = async (firebaseUser) => {
         return existingUser;
     }
 
-    const fullName = firebaseUser.name || "";
-    const nameParts = fullName.trim().split(" ");
+    const fullName = typeof firebaseUser?.name === "string" ? firebaseUser.name : "";
+    const nameParts = fullName.trim().split(/\s+/).filter(Boolean);
 
-    const firstName = nameParts[0] || "";
-    const lastName = nameParts.slice(1).join(" ") || "";
+    const firstName = nameParts[0] || "Care24";
+    const lastName = nameParts.slice(1).join(" ") || "Member";
 
-    const provider = firebaseUser.firebase.sign_in_provider;
+    const provider = firebaseUser?.firebase?.sign_in_provider;
     const authProvider = provider === "google.com" ? "google" : "phone";
     // Create new
     const user = new User({

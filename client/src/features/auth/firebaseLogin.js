@@ -41,8 +41,7 @@ const firebaseLogin = createSlice({
         state.isAuthenticated = true;
         state.loading = false;  
       })
-      .addCase(userLogin.rejected, (state, action) => {
-        console.log(action.payload);
+      .addCase(userLogin.rejected, (state) => {
         state.loading = false;  
       });
   },

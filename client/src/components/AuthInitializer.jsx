@@ -15,17 +15,18 @@ function AuthInit({children}) {
     );
 
   useEffect(() => {
+    if (!auth) {
+      dispatch(userLogout());
+      return undefined;
+    }
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
           const idToken = await firebaseUser.getIdToken();
-
-          // Verify with your backend and update Redux
           dispatch(userLogin(idToken));
         } catch (error) {
           console.error("Authentication failed:", error);
-
           dispatch(userLogout());
         }
       } else {
@@ -33,7 +34,6 @@ function AuthInit({children}) {
       }
     });
 
-    // Cleanup when component unmounts
     return () => unsubscribe();
   }, [dispatch]);
 

@@ -1,14 +1,15 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import getToken from "../firebase/getToken";
+import { apiBaseUrl } from "./config";
 
 export const getAppointments = createAsyncThunk(
   "appointments/getAppointments",
-  async (caregiverId, thunkAPI) => {
+  async (_, thunkAPI) => {
     const token = await getToken();
     try {
       const response = await axios.get(
-        `http://localhost:3000/appointments/${caregiverId}`,
+        `${apiBaseUrl}/bookings`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -27,7 +28,7 @@ export const getAppointmentDetails = createAsyncThunk(
     const token = await getToken();
     try {
       const response = await axios.get(
-        `http://localhost:3000/appointments/details/${bookingId}`,
+        `${apiBaseUrl}/bookings/${bookingId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -46,8 +47,8 @@ export const updateBookingStatus = createAsyncThunk(
     async ({ bookingId, status }, thunkAPI) => {
         const token = await getToken();
         try{
-            const response = await axios.post(
-                `http://localhost:3000/appointments/${bookingId}/status`,
+            const response = await axios.patch(
+                `${apiBaseUrl}/bookings/${bookingId}/status`,
                 { status },
                 {
                     headers: {

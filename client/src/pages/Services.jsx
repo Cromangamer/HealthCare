@@ -4,6 +4,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 import LocationSearch from "./Elements/locationSearch";
+import { apiBaseUrl } from "../api/config";
 
 const SERVICE_CATALOG = [
   {
@@ -65,17 +66,19 @@ function Services() {
 
   useEffect(() => {
     if (!selectedCity) {
-      setData([]);
       return;
     }
 
     const getData = async () => {
       setIsLoading(true);
-
+      console.log(selectedCity);
+      console.log(selectedCity.name);
+      console.log(selectedCity.state);
       try {
         const response = await axios.get(
-          `http://localhost:3000/services/summary?city=${selectedCity.name}&state=${selectedCity.state}`,
+          `${apiBaseUrl}/services/summary?city=${encodeURIComponent(selectedCity.name)}&state=${encodeURIComponent(selectedCity.state)}`,
         );
+        console.log(response.data);
 
         setData(response.data);
       } catch (error) {
@@ -90,11 +93,11 @@ function Services() {
   }, [selectedCity]);
 
   const servicesMap = useMemo(() => {
-    return data.reduce((acc, service) => {
+    return (selectedCity ? data : []).reduce((acc, service) => {
       acc[service.serviceType] = service;
       return acc;
     }, {});
-  }, [data]);
+  }, [data, selectedCity]);
 
   return (
     <div className="care24-page min-h-screen bg-transparent px-4 py-8 text-slate-900 sm:px-6 lg:px-8">

@@ -1,4 +1,3 @@
-console.log("Loading User model...");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -60,7 +59,7 @@ const userSchema = new Schema(
 
     role: {
         type: String,
-        enum: ["user", "caregiver", "admin"],
+        enum: ["user", "patient", "caregiver", "admin"],
         default: "user",
     },
 

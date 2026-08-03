@@ -23,27 +23,7 @@ function Navbar() {
     { label: "Contact", to: "/contact" },
   ];
 
-  let menuLinks = []
-  if (isAuthenticated){
-    menuLinks = [
-      { label: "Profile", to: "/profile"},
-      { label: "Home", to: "/" },
-      { label: "Services", to: "/services" },
-      { label: "Caregivers", to: "/caregivers" },
-      { label: "About Us", to: "/about" },
-      { label: "Blog", to: "/blog" },
-      { label: "Contact", to: "/contact" },
-    ];
-  } else {
-    menuLinks = [
-      { label: "Home", to: "/" },
-      { label: "Services", to: "/services" },
-      { label: "Caregivers", to: "/caregivers" },
-      { label: "About Us", to: "/about" },
-      { label: "Blog", to: "/blog" },
-      { label: "Contact", to: "/contact" },
-    ];
-  }
+  const menuLinks = isAuthenticated ? [{ label: "Profile", to: "/profile" }, { label: "Chat", to: "/chat" }, ...links] : links;
 
 
 

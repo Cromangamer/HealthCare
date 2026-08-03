@@ -1,10 +1,9 @@
-import React from "react";
+import { useState } from "react";
 
 function Contact(){
-    return (
-        <>
-        </>
-    )
+  const [sent, setSent] = useState(false);
+  function submit(event) { event.preventDefault(); setSent(true); event.currentTarget.reset(); }
+  return <main className="care24-page mx-auto min-h-screen max-w-6xl px-4 py-8 sm:px-6 lg:px-8"><div className="grid gap-6 lg:grid-cols-[.8fr_1.2fr]"><section className="care24-card care24-card--elevated rounded-[2rem] p-7 sm:p-9"><span className="care24-badge care24-badge--success">We are here to help</span><h1 className="mt-4 text-3xl font-semibold text-slate-900">Talk to Care24</h1><p className="mt-3 leading-7 text-slate-600">Have a question about care options or booking? Send a note and our team will get back to you.</p><div className="mt-8 space-y-4 text-sm"><div className="rounded-2xl bg-slate-50 p-4"><p className="font-semibold text-slate-900">Care support</p><p className="mt-1 text-slate-600">Available every day for care coordination.</p></div><div className="rounded-2xl bg-slate-50 p-4"><p className="font-semibold text-slate-900">For urgent medical needs</p><p className="mt-1 text-slate-600">Please contact your local emergency services.</p></div></div></section><form onSubmit={submit} className="care24-card rounded-[2rem] p-7 sm:p-9"><h2 className="text-xl font-semibold text-slate-900">Send a message</h2>{sent && <div className="care24-alert care24-alert--success mt-4">Thanks—we’ve received your message and will be in touch shortly.</div>}<div className="care24-form mt-5"><label className="care24-form__label">Name<input required className="care24-input" name="name" /></label><label className="care24-form__label">Email<input required type="email" className="care24-input" name="email" /></label><label className="care24-form__label">How can we help?<textarea required className="care24-input min-h-32 resize-y" name="message" /></label><button className="care24-btn care24-btn--primary" type="submit">Send message</button></div></form></div></main>
 }
 
 export default Contact;

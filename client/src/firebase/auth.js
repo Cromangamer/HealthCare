@@ -1,6 +1,5 @@
 import { auth } from "./config";
 import { signOut } from "firebase/auth";
-import { onAuthStateChanged } from "firebase/auth";
 import {
   GoogleAuthProvider,
   signInWithPopup,

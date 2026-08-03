@@ -1,59 +1,14 @@
 const express = require("express");
+const { authenticate } = require("../middleware/authenticate");
+const booking = require("../controllers/bookingController");
 const router = express.Router();
-const Booking = require("../models/booking")
-const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 
-router.post("/", verifyFirebaseToken, async (req, res) => {
-    try{
-        const {
-            patientId,
-            serviceId,
-            caregiverId,
-        } = req.body;
-
-        if(!patientId || !serviceId || !caregiverId){
-            return res.status(400).json({
-                message: "patientId, serviceId and caregiverId are required"
-            });
-        }
-
-        const booking = new Booking({
-            patientId,
-            serviceId,
-            caregiverId
-        })
-
-        await booking.save();
-
-        res.status(201).json({
-            message: "Successfully Service Book! "
-        })
-    }
-    catch ( error ) {
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-}); // create booking
-
-router.delete("/:bookingId", verifyFirebaseToken, async (req, res) =>{
-    try{
-        const { bookingId } = req.params;
-        const booking = await Booking.findByIdAndDelete(bookingId);
-
-        if (!booking) {
-            return res.status(404).json({
-                message: "Booking not found"
-            });
-        }
-
-        res.json({
-            message: "Booking deleted successfully"
-        });
-        
-    }
-    catch (error){
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-
-}) // delete booking
-
+router.use(authenticate);
+router.get("/history", booking.history);
+router.get("/", booking.list);
+router.post("/", booking.create);
+router.get("/:id", booking.getOne);
+router.patch("/:id", booking.update);
+router.delete("/:id", booking.remove);
+router.patch("/:id/status", booking.changeStatus);
 module.exports = router;

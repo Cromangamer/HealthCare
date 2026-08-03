@@ -42,9 +42,12 @@ async function updateCaregiverRating(caregiverId) {
     },
   ]);
 
+  const average = stats.length ? Number(stats[0].averageRating.toFixed(1)) : 0;
+  const totalReviews = stats.length ? stats[0].totalReviews : 0;
+
   await Caregiver.findByIdAndUpdate(caregiverId, {
-    rating: stats.length ? stats[0].averageRating : 0,
-    totalReviews: stats.length ? stats[0].totalReviews : 0,
+    totalrating: average,
+    totalReviews,
   });
 }
 

@@ -4,13 +4,10 @@ const verifyFirebaseToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    console.log(req.headers);
-    
-
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Authorization tokan missing",
+        message: "Authorization token missing",
       });
     }
     // Extract token

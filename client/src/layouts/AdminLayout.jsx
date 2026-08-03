@@ -1,10 +1,7 @@
-import React from "react";
+import { Outlet } from "react-router-dom";
 
 function AdminLayout(){
-    return (
-        <>
-        </>
-    )
+    return <main className="min-h-screen bg-background"><Outlet /></main>;
 }
 
 export default AdminLayout;

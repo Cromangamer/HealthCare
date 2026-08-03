@@ -9,19 +9,11 @@ const messageSchema = new Schema({
     },
 
     sender: {
-        role: String,
-        enum: [
-            "caregiver",
-            "patient"
-        ]
+        role: { type: String, enum: ["caregiver", "patient"], required: true }
     },
 
     receiver: {
-        role: String,
-        enum: [
-            "caregiver",
-            "patient"
-        ]
+        role: { type: String, enum: ["caregiver", "patient"], required: true }
     },
 
     message: {

@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import getToken from "../firebase/getToken";
+import { apiBaseUrl } from "./config";
 
 
 export const createCaregiver = createAsyncThunk(
@@ -9,7 +10,7 @@ export const createCaregiver = createAsyncThunk(
     const token = await getToken();
     try {
       const response = await axios.post(
-        "http://localhost:3000/caregivers",
+        `${apiBaseUrl}/caregivers`,
         caregiverData,
         {
           headers: {
@@ -30,7 +31,7 @@ export const updateCaregiver = createAsyncThunk(
     const token = await getToken();
     try {
       const response = await axios.patch(
-        `http://localhost:3000/caregivers/${caregiverData.userId}`,
+        `${apiBaseUrl}/caregivers/${caregiverData.userId}`,
         caregiverData,
         {
           headers: {
@@ -50,7 +51,7 @@ export const getCaregiver = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/caregivers/${userId}`
+        `${apiBaseUrl}/caregivers/${userId}`
       );
       return response.data;
     } catch (err) {
@@ -58,13 +59,18 @@ export const getCaregiver = createAsyncThunk(
     }
 });
 
+export const getCaregivers = async (params) => {
+  const response = await axios.get(`${apiBaseUrl}/caregivers`, { params });
+  return response.data;
+};
+
 export const deleteCaregiver = createAsyncThunk(
   "login/deleteCaregiver",
   async (userId, thunkAPI) => {
     const token = await getToken();
     try {
       const response = await axios.delete(
-        `http://localhost:3000/caregivers/${userId}`,
+        `${apiBaseUrl}/caregivers/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

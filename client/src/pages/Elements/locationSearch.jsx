@@ -12,12 +12,6 @@ function LocationSearch() {
     dispatch(loadCities());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (selectedCity) {
-      setSearchTerm(`${selectedCity.name}, ${selectedCity.state}`);
-    }
-  }, [selectedCity]);
-
   const filteredCities = useMemo(() => {
     const value = searchTerm.trim().toLowerCase();
 

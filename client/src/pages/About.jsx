@@ -1,10 +1,5 @@
-import React from "react";
-
 function About(){
-    return (
-        <>
-        </>
-    )
+  return <main className="care24-page mx-auto min-h-screen max-w-7xl px-4 py-8 sm:px-6 lg:px-8"><section className="care24-card care24-card--elevated rounded-[2rem] p-7 sm:p-10"><span className="care24-badge">Our purpose</span><h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-slate-900">Making dependable care feel more human.</h1><p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Care24 connects families to thoughtful, professional home healthcare and elderly-care support—without making a difficult moment harder to manage.</p></section><section className="mt-6 grid gap-5 md:grid-cols-3">{[["Compassion first","Every care plan starts by listening to the person and family involved."],["Built on trust","We value clear communication, quality standards, and respectful support."],["Care at home","Our focus is practical, dignified help where people feel most comfortable."]].map(([title, description])=><article key={title} className="care24-card p-6"><h2 className="text-lg font-semibold text-slate-900">{title}</h2><p className="mt-3 text-sm leading-6 text-slate-600">{description}</p></article>)}</section></main>
 }
 
 export default About;

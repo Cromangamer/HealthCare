@@ -1,6 +1,3 @@
-import React from "react"
-
-
 function App() {
   return (
     <main className="care24-page min-h-screen bg-transparent px-4 py-8 text-slate-900 sm:px-6 lg:px-8">

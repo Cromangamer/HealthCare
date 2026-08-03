@@ -52,6 +52,11 @@ const caregiverSchema = new Schema({
         default: 0,
     },
 
+    totalReviews: {
+        type: Number,
+        default: 0,
+    },
+
     bio: {
         type: String,
         maxlength: 1000,

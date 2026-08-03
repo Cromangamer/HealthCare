@@ -65,6 +65,8 @@ bookingSchema.index({ patientId: 1 });
 bookingSchema.index({ caregiverId: 1 });
 
 bookingSchema.index({ status: 1 });
+bookingSchema.index({ patientId: 1, createdAt: -1 });
+bookingSchema.index({ caregiverId: 1, createdAt: -1 });
 
 
 const Booking = mongoose.model('Booking', bookingSchema);
