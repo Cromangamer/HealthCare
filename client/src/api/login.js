@@ -5,8 +5,9 @@ import { apiBaseUrl } from "./config";
 export const userLogin = createAsyncThunk(
   "login/userLogin",
   async (idToken, thunkAPI) => {
+    console.log("5. Thunk started");
     try {
-      console.log("Sending token to backend");
+      console.log("6. Sending request");
       const response = await axios.post(
         `${apiBaseUrl}/auth/firebase-login`,
         {},
@@ -16,14 +17,14 @@ export const userLogin = createAsyncThunk(
           },
         }
       );
-      console.log("Backend response:", response.data);
+      console.log("7. Response received", response.data);
       // return response.data.user;
-      console.error("Axios Error:", err.response?.data || err);
 
       return thunkAPI.rejectWithValue(
         err.response?.data || err.message
       );
     } catch (err) {
+      console.error("8. Axios failed", err);
       return thunkAPI.rejectWithValue(err.response?.data);
     }
   }

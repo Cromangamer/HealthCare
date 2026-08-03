@@ -35,6 +35,9 @@ const firebaseLogin = createSlice({
 
   extraReducers: (builder) => {
     builder
+      .addCase(userLogin.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(userLogin.fulfilled, (state, action) => {
         Object.assign(state, action.payload);
 

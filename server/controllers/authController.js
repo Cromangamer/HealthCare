@@ -2,6 +2,7 @@ const authService = require("../services/authService");
 
 exports.firebaseLogin = async (req, res) => {
     try {
+        console.log("Firebase User:", req.firebaseUser);
         const user = await authService.firebaseLogin(req.firebaseUser);
         
         return res.status(200).json({

@@ -39,12 +39,12 @@ function AuthInit({ children }) {
       if (firebaseUser) {
         try {
           const idToken = await firebaseUser.getIdToken();
-
+          console.log("1. Got Firebase token");
           console.log("Dispatching backend login...");
 
-          const user = await dispatch(userLogin(idToken)).unwrap();
+          const result = await dispatch(userLogin(idToken)).unwrap();
 
-          console.log("Backend Success:", user);
+          console.log("Backend Success:", result);
         } catch (error) {
           console.error("Backend Login Error:", error);
           dispatch(userLogout());
