@@ -17,7 +17,12 @@ export const userLogin = createAsyncThunk(
         }
       );
       console.log("Backend response:", response.data);
-      return response.data.user;
+      // return response.data.user;
+      console.error("Axios Error:", err.response?.data || err);
+
+      return thunkAPI.rejectWithValue(
+        err.response?.data || err.message
+      );
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data);
     }

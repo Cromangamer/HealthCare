@@ -7,12 +7,10 @@ import { userLogin } from "../api/login";
 import { userLogout } from "../features/auth/firebaseLogin";
 import Loading from "./Loading";
 
-function AuthInit({children}) {
+function AuthInit({ children }) {
   const dispatch = useDispatch();
 
-  const loading = useSelector(
-        state => state.firebaseLogin.loading
-    );
+  const loading = useSelector((state) => state.firebaseLogin.loading);
 
   useEffect(() => {
     if (!auth) {
@@ -27,7 +25,7 @@ function AuthInit({children}) {
 
         if (result?.user) {
           console.log("Redirect User:", result.user);
-}
+        }
       } catch (error) {
         console.error("Redirect Error:", error);
       }
@@ -37,14 +35,18 @@ function AuthInit({children}) {
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       console.log("Auth State:", firebaseUser);
+
       if (firebaseUser) {
         try {
-          console.log("UID:", firebaseUser.uid);
           const idToken = await firebaseUser.getIdToken();
-          console.log("Token:", idToken.substring(0, 20));
-          dispatch(userLogin(idToken));
+
+          console.log("Dispatching backend login...");
+
+          const user = await dispatch(userLogin(idToken)).unwrap();
+
+          console.log("Backend Success:", user);
         } catch (error) {
-          console.error("Authentication failed:", error);
+          console.error("Backend Login Error:", error);
           dispatch(userLogout());
         }
       } else {
