@@ -17,9 +17,9 @@ export const signInWithGoogle = async () => {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
     let result;
     if (isMobile) {
-      result = await signInWithRedirect(auth, provider);
+      result = await signInWithRedirect(auth, googleProvider);
     } else {
-      result = await signInWithPopup(auth, provider);
+      result = await signInWithPopup(auth, googleProvider);
     }
     const token = await result.user.getIdToken();
 
