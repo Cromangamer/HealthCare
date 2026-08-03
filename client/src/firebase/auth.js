@@ -3,6 +3,7 @@ import { signOut } from "firebase/auth";
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
   RecaptchaVerifier,
   signInWithPhoneNumber,
 } from "firebase/auth";
@@ -10,9 +11,16 @@ import {
 let confirmationResult = null;
 const googleProvider = new GoogleAuthProvider();
 
+
 export const signInWithGoogle = async () => {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    let result;
+    if (isMobile) {
+      result = await signInWithRedirect(auth, provider);
+    } else {
+      result = await signInWithPopup(auth, provider);
+  
     const token = await result.user.getIdToken();
 
     return {
