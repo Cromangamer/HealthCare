@@ -223,7 +223,7 @@ function CaregiverServices() {
       </section>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 px-4 py-6">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/55 px-4 pt-[50px] pb-6">
           <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] bg-white shadow-2xl">
             <div className="border-b border-slate-200 px-6 py-4 sm:px-8">
               <div className="flex items-center justify-between gap-3">
