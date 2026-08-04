@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Service = require("../models/service");
 const Caregiver = require("../models/caregiver");
+const locationValidator = require("../utils/locationValidator");
 
 const editableFields = [
   "serviceType",
@@ -438,14 +439,15 @@ exports.removeAdmin = async (req, res, next) => {
 exports.summary = async (req, res, next) => {
   try {
     const match = { isActive: true };
-    if (req.query.city)
+    const location = locationValidator(req.query.city, req.query.state);
+    if (location.city)
       match["serviceArea.city"] = new RegExp(
-        `^${escapeRegex(req.query.city)}$`,
+        `^${escapeRegex(location.city)}$`,
         "i",
       );
-    if (req.query.state)
+    if (location.state)
       match["serviceArea.state"] = new RegExp(
-        `^${escapeRegex(req.query.state)}$`,
+        `^${escapeRegex(location.state)}$`,
         "i",
       );
     const result = await Service.aggregate([
