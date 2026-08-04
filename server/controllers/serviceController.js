@@ -490,12 +490,13 @@ exports.summary = async (req, res, next) => {
           isActive: s.isActive,
         }))
       );
-    const result = await Service.aggregate([
-      { $match: match },
-      { $group: { _id: "$serviceType", availableCaregiver: { $sum: 1 } } },
-      { $project: { _id: 0, serviceType: "$_id", availableCaregiver: 1 } },
-    ]);
-    res.json(result);
+    // const result = await Service.aggregate([
+    //   { $match: match },
+    //   { $group: { _id: "$serviceType", availableCaregiver: { $sum: 1 } } },
+    //   { $project: { _id: 0, serviceType: "$_id", availableCaregiver: 1 } },
+    // ]);
+    // res.json(result);
+    res.json(matched);
   } catch (error) {
     next(error);
   }

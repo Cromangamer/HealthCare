@@ -59,13 +59,17 @@ const SERVICE_CATALOG = [
 function ServiceType() {
   const { Type } = useParams();
   const navigate = useNavigate();
-  const selectedCity = useSelector((state) => state.ServiceLocation.selectedCity);
+  const selectedCity = useSelector(
+    (state) => state.ServiceLocation.selectedCity,
+  );
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const decodedType = decodeURIComponent(Type || "");
-  const service = SERVICE_CATALOG.find((item) => item.serviceType === decodedType);
+  const service = SERVICE_CATALOG.find(
+    (item) => item.serviceType === decodedType,
+  );
 
   useEffect(() => {
     if (!service || !selectedCity) return undefined;
@@ -73,13 +77,27 @@ function ServiceType() {
     async function loadProviders() {
       setLoading(true);
       try {
-        const response = await axios.get(`${apiBaseUrl}/services`, { params: { serviceType: service.serviceType, city: selectedCity.name, state: selectedCity.state } });
-        if (active) { setProviders(response.data.services || []); setError(""); }
-      } catch { if (active) setError("We couldn’t load available providers right now."); }
-      finally { if (active) setLoading(false); }
+        const response = await axios.get(`${apiBaseUrl}/services`, {
+          params: {
+            serviceType: service.serviceType,
+            city: selectedCity.name,
+            state: selectedCity.state,
+          },
+        });
+        if (active) {
+          setProviders(response.data.services || []);
+          setError("");
+        }
+      } catch {
+        if (active) setError("We couldn’t load available providers right now.");
+      } finally {
+        if (active) setLoading(false);
+      }
     }
     loadProviders();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [selectedCity, service]);
 
   if (!service) {
@@ -87,9 +105,17 @@ function ServiceType() {
       <div className="care24-page min-h-screen bg-transparent px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <div className="care24-card rounded-[2rem] p-8 text-center">
-            <h1 className="text-2xl font-semibold text-slate-900">Service not found</h1>
-            <p className="mt-3 text-slate-600">Please return to the services page and select a valid care category.</p>
-            <button onClick={() => navigate("/services")} className="care24-btn care24-btn--primary mt-6">
+            <h1 className="text-2xl font-semibold text-slate-900">
+              Service not found
+            </h1>
+            <p className="mt-3 text-slate-600">
+              Please return to the services page and select a valid care
+              category.
+            </p>
+            <button
+              onClick={() => navigate("/services")}
+              className="care24-btn care24-btn--primary mt-6"
+            >
               View services
             </button>
           </div>
@@ -102,31 +128,49 @@ function ServiceType() {
     <div className="care24-page min-h-screen bg-transparent px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
         <section className="care24-card care24-card--elevated overflow-hidden rounded-[2rem] p-6 sm:p-8 lg:p-10">
-          <button onClick={() => navigate("/services")} className="care24-btn care24-btn--ghost">
+          <button
+            onClick={() => navigate("/services")}
+            className="care24-btn care24-btn--ghost"
+          >
             ← Back to services
           </button>
 
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div>
-              <span className="care24-badge care24-badge--success">Selected service</span>
+              <span className="care24-badge care24-badge--success">
+                Selected service
+              </span>
               <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
                 {service.serviceType}
               </h1>
               <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-                Personalized care support with trained professionals available in {selectedCity ? `${selectedCity.name}, ${selectedCity.state}` : "your selected location"}.
+                Personalized care support with trained professionals available
+                in{" "}
+                {selectedCity
+                  ? `${selectedCity.name}, ${selectedCity.state}`
+                  : "your selected location"}
+                .
               </p>
             </div>
 
             <div className="care24-widget p-5">
-              <p className="text-sm font-semibold text-slate-700">Booking snapshot</p>
+              <p className="text-sm font-semibold text-slate-700">
+                Booking snapshot
+              </p>
               <div className="mt-4 space-y-3 text-sm text-slate-600">
                 <div className="rounded-2xl bg-slate-50 p-3">
                   <p className="font-semibold text-slate-800">Fast booking</p>
-                  <p className="mt-1">Choose your preferred care plan and confirm quickly.</p>
+                  <p className="mt-1">
+                    Choose your preferred care plan and confirm quickly.
+                  </p>
                 </div>
                 <div className="rounded-2xl bg-slate-50 p-3">
-                  <p className="font-semibold text-slate-800">Verified support</p>
-                  <p className="mt-1">Professionals are screened for quality and safety.</p>
+                  <p className="font-semibold text-slate-800">
+                    Verified support
+                  </p>
+                  <p className="mt-1">
+                    Professionals are screened for quality and safety.
+                  </p>
                 </div>
               </div>
             </div>
@@ -135,7 +179,9 @@ function ServiceType() {
 
         <section className="grid gap-5 lg:grid-cols-3">
           <div className="care24-card p-6">
-            <h2 className="text-lg font-semibold text-slate-900">What this includes</h2>
+            <h2 className="text-lg font-semibold text-slate-900">
+              What this includes
+            </h2>
             <ul className="mt-4 space-y-2 text-sm text-slate-600">
               <li>• Scheduled care visits</li>
               <li>• Flexible support duration</li>
@@ -144,18 +190,114 @@ function ServiceType() {
           </div>
 
           <div className="care24-card p-6">
-            <h2 className="text-lg font-semibold text-slate-900">Why patients trust Care24</h2>
+            <h2 className="text-lg font-semibold text-slate-900">
+              Why patients trust Care24
+            </h2>
             <p className="mt-3 text-sm leading-7 text-slate-600">
-              Each service is designed to feel calm, dependable, and easy to coordinate from start to finish.
+              Each service is designed to feel calm, dependable, and easy to
+              coordinate from start to finish.
             </p>
           </div>
 
           <div className="care24-card p-6">
             <h2 className="text-lg font-semibold text-slate-900">Next step</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-600">Choose an available provider below to continue your booking.</p>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              Choose an available provider below to continue your booking.
+            </p>
           </div>
         </section>
-        <section className="care24-card p-6 sm:p-8"><div className="flex items-center justify-between gap-4"><div><h2 className="text-xl font-semibold text-slate-900">Available providers</h2><p className="mt-1 text-sm text-slate-600">Live availability for this service and location.</p></div>{selectedCity && <span className="care24-badge">{selectedCity.name}</span>}</div>{!selectedCity ? <div className="care24-empty mt-5">Select a city on the services page to see providers.</div> : error ? <div className="care24-alert care24-alert--error mt-5">{error}</div> : loading ? <div className="mt-5 grid gap-4 md:grid-cols-2">{[1, 2].map((item) => <div key={item} className="care24-skeleton h-32" />)}</div> : providers.length ? <div className="mt-5 grid gap-4 md:grid-cols-2">{providers.map((provider) => { const user = provider.caregiverId?.userId || {}; const name = `${user.firstName || "Care"} ${user.lastName || "Professional"}`; return <article key={provider._id} className="rounded-[1.5rem] border border-slate-200 p-5"><p className="font-semibold text-slate-900">{name}</p><p className="mt-1 text-sm text-slate-600">{provider.description}</p><div className="mt-4 flex items-center justify-between"><span className="text-sm font-semibold text-slate-800">₹{provider.price} / {provider.priceType.replace("_", " ")}</span><button onClick={() => navigate("/booking", { state: { service: provider } })} className="care24-btn care24-btn--primary">Book care</button></div></article>; })}</div> : <div className="care24-empty mt-5">No providers are currently available for this location.</div>}</section>
+        <section className="care24-card p-6 sm:p-8">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900">
+                Available providers
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Live availability for this service and location.
+              </p>
+            </div>
+            {selectedCity && (
+              <span className="care24-badge">{selectedCity.name}</span>
+            )}
+          </div>
+          {!selectedCity ? (
+            <div className="care24-empty mt-5">
+              Select a city on the services page to see providers.
+            </div>
+          ) : error ? (
+            <div className="care24-alert care24-alert--error mt-5">{error}</div>
+          ) : loading ? (
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              {[1, 2].map((item) => (
+                <div key={item} className="care24-skeleton h-32" />
+              ))}
+            </div>
+          ) : providers.length ? (
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              {providers.map((provider) => {
+                const profileImage =
+                  provider.caregiverId?.userId?.profileImage || "";
+                const user = provider.caregiverId?.userId || {};
+                const name = `${user.firstName || "Care"} ${user.lastName || "Professional"}`;
+                return (
+                  <article
+                    key={provider._id}
+                    className="rounded-[1.5rem] border border-slate-200 bg-white p-5 transition hover:shadow-lg"
+                  >
+                    <div className="flex items-start gap-4">
+                      <img
+                        src={
+                          profileImage
+                            ? profileImage.replace(
+                                "/upload/",
+                                "/upload/w_120,h_120,c_fill,g_face/",
+                              )
+                            : "https://ui-avatars.com/api/?name=" +
+                              encodeURIComponent(name) +
+                              "&background=0ea5e9&color=fff"
+                        }
+                        alt={name}
+                        className="h-16 w-16 rounded-full border-2 border-sky-100 object-cover"
+                      />
+
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-slate-900">
+                          {name}
+                        </h3>
+
+                        <p className="mt-1 line-clamp-2 text-sm text-slate-600">
+                          {provider.description}
+                        </p>
+
+                        <div className="mt-4 flex items-center justify-between">
+                          <span className="rounded-full bg-sky-50 px-3 py-1 text-sm font-semibold text-sky-700">
+                            ₹{provider.price} /{" "}
+                            {provider.priceType.replace("_", " ")}
+                          </span>
+
+                          <button
+                            onClick={() =>
+                              navigate("/booking", {
+                                state: { service: provider },
+                              })
+                            }
+                            className="care24-btn care24-btn--primary"
+                          >
+                            Book Care
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="care24-empty mt-5">
+              No providers are currently available for this location.
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
