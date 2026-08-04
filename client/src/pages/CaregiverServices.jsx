@@ -6,7 +6,7 @@ import {
   getCaregiverServices,
   updateCaregiverService,
 } from "../api/services";
-
+import LocationSearch from "./Elements/locationSearch";
 const emptyForm = {
   serviceType: "Companion Care",
   description: "",
