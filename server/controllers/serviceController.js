@@ -52,8 +52,19 @@ exports.create = async (req, res, next) => {
         .json({ message: "serviceType, description and price are required" });
     if (!payload.priceType) payload.priceType = "hourly";
     if (!payload.serviceMode) payload.serviceMode = "in_home";
-    if (!payload.serviceArea || !Array.isArray(payload.serviceArea))
+    if (!payload.serviceArea || !Array.isArray(payload.serviceArea)){
       payload.serviceArea = [];
+    } else {
+       payload.serviceArea = payload.serviceArea.map((area) => {
+        const location = locationValidator(area.city, area.state);
+
+        return {
+          ...area,
+          city: location.city,
+          state: location.state,
+        };
+      });
+    }
     const duplicate = await Service.findOne({
       caregiverId,
       serviceType: payload.serviceType,
