@@ -26,19 +26,19 @@ export const signInWithGoogle = async () => {
   try {
     
     await ensurePersistence();
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    console.log(navigator.userAgent);
-    console.log("Is Mobile:", isMobile);
-    if (isMobile) {
-      const result = await signInWithRedirect(auth, googleProvider);
-      console.log("Redirect initiated:", result);
-      // Redirect starts here.
-      // AuthInit will continue after the user returns.
-      return{
-        success: true,
-        result,
-      };
-    }
+    // const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    // console.log(navigator.userAgent);
+    // console.log("Is Mobile:", isMobile);
+    // if (isMobile) {
+    //   const result = await signInWithRedirect(auth, googleProvider);
+    //   console.log("Redirect initiated:", result);
+    //   // Redirect starts here.
+    //   // AuthInit will continue after the user returns.
+    //   return{
+    //     success: true,
+    //     result,
+    //   };
+    // }
 
     const result = await signInWithPopup(auth, googleProvider);
 
