@@ -20,7 +20,7 @@ function AuthInit({ children }) {
     async function finishRedirect() {
       try {
         const result = await getRedirectResult(auth);
-
+        console.log("auth Result:", auth);
         console.log("Redirect Result:", result);
 
         if (result?.user) {
