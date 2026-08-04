@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createCaregiverService, deleteCaregiverService, getCaregiverServices, updateCaregiverService } from "../api/services";
+import validateLocation from "../utils/locationValidator";
+
 
 const emptyForm = {
   serviceType: "Companion Care",
@@ -109,6 +111,8 @@ function CaregiverServices() {
     setMessage("");
 
     try {
+      const location = validateLocation(form.city, form.state);
+
       const payload = {
         serviceType: form.serviceType,
         description: form.description,
@@ -116,7 +120,7 @@ function CaregiverServices() {
         price: Number(form.price),
         duration: form.duration ? Number(form.duration) : undefined,
         serviceMode: form.serviceMode,
-        serviceArea: form.city || form.state || form.pincode ? [{ city: form.city, state: form.state, pincode: form.pincode ? Number(form.pincode) : undefined }] : [],
+        serviceArea: form.city || form.state || form.pincode ? [{ city: location.city, state: location.state, pincode: form.pincode ? Number(form.pincode) : undefined }] : [],
         availability: form.availability || {},
         isActive: form.isActive,
       };
