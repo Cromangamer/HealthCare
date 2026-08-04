@@ -11,13 +11,21 @@ import {
 import {browserLocalPersistence,  setPersistence,} from "firebase/auth";
 
 let confirmationResult = null;
+let persistenceReady = null; // cache the promise so we only set it once
 
 const googleProvider = new GoogleAuthProvider();
+
+const ensurePersistence = () => {
+  if (!persistenceReady) {
+    persistenceReady = setPersistence(auth, browserLocalPersistence);
+  }
+  return persistenceReady;
+};
 
 export const signInWithGoogle = async () => {
   try {
     
-    setPersistence(auth, browserLocalPersistence);
+    await ensurePersistence();
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     console.log(navigator.userAgent);
     console.log("Is Mobile:", isMobile);
