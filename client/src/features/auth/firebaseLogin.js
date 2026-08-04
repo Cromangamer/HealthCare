@@ -40,7 +40,7 @@ const firebaseLogin = createSlice({
       })
       .addCase(userLogin.fulfilled, (state, action) => {
         Object.assign(state, action.payload);
-
+        
         state.isAuthenticated = true;
         state.loading = false;  
       })

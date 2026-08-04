@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { createCaregiverService, deleteCaregiverService, getCaregiverServices, updateCaregiverService } from "../api/services";
+import {
+  createCaregiverService,
+  deleteCaregiverService,
+  getCaregiverServices,
+  updateCaregiverService,
+} from "../api/services";
 
 const emptyForm = {
   serviceType: "Companion Care",
@@ -50,7 +55,10 @@ function CaregiverServices() {
       const data = await getCaregiverServices({ page: 1, limit: 50 });
       setServices(data.services || []);
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to load your services right now.");
+      setError(
+        err.response?.data?.message ||
+          "Unable to load your services right now.",
+      );
     } finally {
       setLoading(false);
     }
@@ -116,13 +124,28 @@ function CaregiverServices() {
         price: Number(form.price),
         duration: form.duration ? Number(form.duration) : undefined,
         serviceMode: form.serviceMode,
-        serviceArea: form.city || form.state || form.pincode ? [{ city: form.city, state: form.state, pincode: form.pincode ? Number(form.pincode) : undefined }] : [],
+        serviceArea:
+          form.city || form.state || form.pincode
+            ? [
+                {
+                  city: form.city,
+                  state: form.state,
+                  pincode: form.pincode ? Number(form.pincode) : undefined,
+                },
+              ]
+            : [],
         availability: form.availability || {},
         isActive: form.isActive,
       };
 
-      if (!payload.serviceType || !payload.description || Number.isNaN(payload.price)) {
-        throw new Error("Service type, description, and a valid price are required.");
+      if (
+        !payload.serviceType ||
+        !payload.description ||
+        Number.isNaN(payload.price)
+      ) {
+        throw new Error(
+          "Service type, description, and a valid price are required.",
+        );
       }
 
       if (editingId) {
@@ -136,7 +159,11 @@ function CaregiverServices() {
       await loadServices();
       closeModal();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Unable to save the service.");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Unable to save the service.",
+      );
     } finally {
       setSaving(false);
     }
@@ -170,18 +197,35 @@ function CaregiverServices() {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <span className="care24-badge">Caregiver workspace</span>
-              <h1 className="mt-3 text-3xl font-semibold text-slate-900">My services</h1>
-              <p className="mt-2 text-slate-600">Create, edit, and remove the services you offer to patients.</p>
+              <h1 className="mt-3 text-3xl font-semibold text-slate-900">
+                My services
+              </h1>
+              <p className="mt-2 text-slate-600">
+                Create, edit, and remove the services you offer to patients.
+              </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link to="/CaregiverDashboard" className="care24-btn care24-btn--ghost">Back to dashboard</Link>
-              <button type="button" onClick={openCreate} className="care24-btn care24-btn--primary">Add service</button>
+              <Link
+                to="/CaregiverDashboard"
+                className="care24-btn care24-btn--ghost"
+              >
+                Back to dashboard
+              </Link>
+              <button
+                type="button"
+                onClick={openCreate}
+                className="care24-btn care24-btn--primary"
+              >
+                Add service
+              </button>
             </div>
           </div>
         </div>
 
         {(message || error) && (
-          <div className={`rounded-[1.5rem] border px-4 py-3 text-sm ${error ? "border-rose-200 bg-rose-50 text-rose-700" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>
+          <div
+            className={`rounded-[1.5rem] border px-4 py-3 text-sm ${error ? "border-rose-200 bg-rose-50 text-rose-700" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}
+          >
             {error || message}
           </div>
         )}
@@ -194,25 +238,52 @@ function CaregiverServices() {
               ))}
             </div>
           ) : services.length === 0 ? (
-            <div className="care24-empty">You have not added any services yet. Create your first one to start receiving patient bookings.</div>
+            <div className="care24-empty">
+              You have not added any services yet. Create your first one to
+              start receiving patient bookings.
+            </div>
           ) : (
             <div className="space-y-3">
               {services.map((service) => (
-                <div key={service._id} className="rounded-[1.5rem] border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+                <div
+                  key={service._id}
+                  className="rounded-[1.5rem] border border-slate-200 bg-slate-50/70 p-4 sm:p-5"
+                >
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-lg font-semibold text-slate-900">{service.serviceType}</p>
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${service.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-700"}`}>
+                        <p className="text-lg font-semibold text-slate-900">
+                          {service.serviceType}
+                        </p>
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${service.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-700"}`}
+                        >
                           {service.isActive ? "Active" : "Inactive"}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm leading-6 text-slate-600">{service.description}</p>
-                      <p className="mt-2 text-sm text-slate-500">₹{service.price} • {service.priceType} • {service.duration || "variable"} mins</p>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">
+                        {service.description}
+                      </p>
+                      <p className="mt-2 text-sm text-slate-500">
+                        ₹{service.price} • {service.priceType} •{" "}
+                        {service.duration || "variable"} mins
+                      </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <button type="button" onClick={() => openEdit(service)} className="care24-btn care24-btn--secondary">Edit</button>
-                      <button type="button" onClick={() => requestDelete(service)} className="care24-btn care24-btn--ghost">Delete</button>
+                      <button
+                        type="button"
+                        onClick={() => openEdit(service)}
+                        className="care24-btn care24-btn--secondary"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => requestDelete(service)}
+                        className="care24-btn care24-btn--ghost"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -228,84 +299,176 @@ function CaregiverServices() {
             <div className="border-b border-slate-200 px-6 py-4 sm:px-8">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600">{editingId ? "Edit service" : "Add service"}</p>
-                  <h2 className="mt-1 text-xl font-semibold text-slate-900">{editingId ? "Update your service" : "Create a new service listing"}</h2>
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600">
+                    {editingId ? "Edit service" : "Add service"}
+                  </p>
+                  <h2 className="mt-1 text-xl font-semibold text-slate-900">
+                    {editingId
+                      ? "Update your service"
+                      : "Create a new service listing"}
+                  </h2>
                 </div>
-                <button type="button" onClick={closeModal} className="text-sm font-semibold text-slate-500">Close</button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="text-sm font-semibold text-slate-500"
+                >
+                  Close
+                </button>
               </div>
             </div>
 
             <form onSubmit={submitForm} className="space-y-4 px-6 py-6 sm:px-8">
               <label className="care24-form__label text-sm">
                 Service type
-                <select name="serviceType" value={form.serviceType} onChange={changeField} className="care24-input mt-2">
+                <select
+                  name="serviceType"
+                  value={form.serviceType}
+                  onChange={changeField}
+                  className="care24-input mt-2"
+                >
                   {serviceTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
                   ))}
                 </select>
               </label>
 
               <label className="care24-form__label text-sm">
                 Description
-                <textarea name="description" value={form.description} onChange={changeField} className="care24-input mt-2 min-h-24" placeholder="Describe the service" required />
+                <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={changeField}
+                  className="care24-input mt-2 min-h-24"
+                  placeholder="Describe the service"
+                  required
+                />
               </label>
 
               <div className="grid gap-4 md:grid-cols-3">
                 <label className="care24-form__label text-sm">
                   Price
-                  <input type="number" min="0" name="price" value={form.price} onChange={changeField} className="care24-input mt-2" required />
+                  <input
+                    type="number"
+                    min="0"
+                    name="price"
+                    value={form.price}
+                    onChange={changeField}
+                    className="care24-input mt-2"
+                    required
+                  />
                 </label>
 
                 <label className="care24-form__label text-sm">
                   Price type
-                  <select name="priceType" value={form.priceType} onChange={changeField} className="care24-input mt-2">
+                  <select
+                    name="priceType"
+                    value={form.priceType}
+                    onChange={changeField}
+                    className="care24-input mt-2"
+                  >
                     {priceTypes.map((type) => (
-                      <option key={type} value={type}>{type}</option>
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
                     ))}
                   </select>
                 </label>
 
                 <label className="care24-form__label text-sm">
                   Duration (mins)
-                  <input type="number" min="0" name="duration" value={form.duration} onChange={changeField} className="care24-input mt-2" />
+                  <input
+                    type="number"
+                    min="0"
+                    name="duration"
+                    value={form.duration}
+                    onChange={changeField}
+                    className="care24-input mt-2"
+                  />
                 </label>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="care24-form__label text-sm">
                   Service mode
-                  <select name="serviceMode" value={form.serviceMode} onChange={changeField} className="care24-input mt-2">
+                  <select
+                    name="serviceMode"
+                    value={form.serviceMode}
+                    onChange={changeField}
+                    className="care24-input mt-2"
+                  >
                     {serviceModes.map((mode) => (
-                      <option key={mode} value={mode}>{mode}</option>
+                      <option key={mode} value={mode}>
+                        {mode}
+                      </option>
                     ))}
                   </select>
                 </label>
 
                 <label className="flex items-center justify-between rounded-[1.25rem] border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
                   <span>Visible to patients</span>
-                  <input type="checkbox" name="isActive" checked={form.isActive} onChange={changeField} className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+                  <input
+                    type="checkbox"
+                    name="isActive"
+                    checked={form.isActive}
+                    onChange={changeField}
+                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                  />
                 </label>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-3">
                 <label className="care24-form__label text-sm">
-                  City
-                  <input name="city" value={form.city} onChange={changeField} className="care24-input mt-2" />
+                  Service Area
                 </label>
-                <label className="care24-form__label text-sm">
-                  State
-                  <input name="state" value={form.state} onChange={changeField} className="care24-input mt-2" />
-                </label>
-                <label className="care24-form__label text-sm">
-                  Pincode
-                  <input type="number" name="pincode" value={form.pincode} onChange={changeField} className="care24-input mt-2" />
-                </label>
+
+                <LocationSearch
+                  onSelect={(location) => {
+                    setForm((prev) => ({
+                      ...prev,
+                      city: location.name,
+                      state: location.state,
+                    }));
+                  }}
+                />
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input
+                    value={form.city}
+                    readOnly
+                    className="care24-input bg-slate-100"
+                    placeholder="City"
+                  />
+
+                  <input
+                    value={form.state}
+                    readOnly
+                    className="care24-input bg-slate-100"
+                    placeholder="State"
+                  />
+                </div>
               </div>
 
               <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
-                <button type="button" onClick={closeModal} className="care24-btn care24-btn--ghost">Cancel</button>
-                <button type="submit" disabled={saving} className="care24-btn care24-btn--primary">
-                  {saving ? "Saving..." : editingId ? "Update service" : "Create service"}
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="care24-btn care24-btn--ghost"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="care24-btn care24-btn--primary"
+                >
+                  {saving
+                    ? "Saving..."
+                    : editingId
+                      ? "Update service"
+                      : "Create service"}
                 </button>
               </div>
             </form>
@@ -316,12 +479,29 @@ function CaregiverServices() {
       {isDeleteOpen && selectedService && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 px-4 py-6">
           <div className="w-full max-w-md rounded-[2rem] bg-white p-6 shadow-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-600">Delete service</p>
-            <h3 className="mt-2 text-xl font-semibold text-slate-900">Remove this service?</h3>
-            <p className="mt-3 text-sm leading-6 text-slate-600">This action will remove the service from your caregiver profile.</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-600">
+              Delete service
+            </p>
+            <h3 className="mt-2 text-xl font-semibold text-slate-900">
+              Remove this service?
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              This action will remove the service from your caregiver profile.
+            </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-end">
-              <button type="button" onClick={() => setIsDeleteOpen(false)} className="care24-btn care24-btn--ghost">Cancel</button>
-              <button type="button" onClick={confirmDelete} disabled={saving} className="care24-btn care24-btn--primary">
+              <button
+                type="button"
+                onClick={() => setIsDeleteOpen(false)}
+                className="care24-btn care24-btn--ghost"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                disabled={saving}
+                className="care24-btn care24-btn--primary"
+              >
                 {saving ? "Deleting..." : "Delete service"}
               </button>
             </div>
