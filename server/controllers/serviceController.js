@@ -129,11 +129,13 @@ exports.createCaregiver = async (req, res, next) => {
         .json({ message: "Only caregivers can create services" });
     if (!req.caregiver)
       return res.status(404).json({ message: "Caregiver profile not found" });
+
     const payload = Object.fromEntries(
       editableFields
         .filter((field) => req.body[field] !== undefined)
         .map((field) => [field, req.body[field]]),
     );
+
     if (
       !payload.serviceType ||
       !payload.description ||
@@ -142,10 +144,25 @@ exports.createCaregiver = async (req, res, next) => {
       return res
         .status(400)
         .json({ message: "serviceType, description and price are required" });
+
     if (!payload.priceType) payload.priceType = "hourly";
     if (!payload.serviceMode) payload.serviceMode = "in_home";
-    if (!payload.serviceArea || !Array.isArray(payload.serviceArea))
+
+    // Use validated location data if a locationValidator middleware ran,
+    // otherwise fall back to what the client sent in req.body.
+    const rawServiceArea = req.validatedLocation?.serviceArea ?? payload.serviceArea;
+
+    if (rawServiceArea === undefined) {
       payload.serviceArea = [];
+    } else if (!Array.isArray(rawServiceArea)) {
+      // Don't silently swallow bad/mistyped data — reject instead of defaulting to []
+      return res
+        .status(400)
+        .json({ message: "serviceArea must be an array" });
+    } else {
+      payload.serviceArea = rawServiceArea;
+    }
+
     const duplicate = await Service.findOne({
       caregiverId: req.caregiver._id,
       serviceType: payload.serviceType,
@@ -154,16 +171,16 @@ exports.createCaregiver = async (req, res, next) => {
       return res
         .status(409)
         .json({ message: "This caregiver already offers that service" });
+
     const service = await Service.create({
       ...payload,
       caregiverId: req.caregiver._id,
     });
-    res
-      .status(201)
-      .json({
-        message: "Service created successfully",
-        service: await populatedService(Service.findById(service._id)),
-      });
+
+    res.status(201).json({
+      message: "Service created successfully",
+      service: await populatedService(Service.findById(service._id)),
+    });
   } catch (error) {
     next(error);
   }
