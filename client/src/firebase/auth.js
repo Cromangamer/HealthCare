@@ -28,6 +28,7 @@ export const signInWithGoogle = async () => {
       // AuthInit will continue after the user returns.
       return{
         success: true,
+        result,
       };
     }
 
