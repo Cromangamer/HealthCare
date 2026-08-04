@@ -22,8 +22,8 @@ export const signInWithGoogle = async () => {
     console.log(navigator.userAgent);
     console.log("Is Mobile:", isMobile);
     if (isMobile) {
-      await signInWithRedirect(auth, googleProvider);
-
+      const result = await signInWithRedirect(auth, googleProvider);
+      console.log("Redirect initiated:", result);
       // Redirect starts here.
       // AuthInit will continue after the user returns.
       return{
