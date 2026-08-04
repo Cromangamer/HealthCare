@@ -55,6 +55,7 @@ exports.create = async (req, res, next) => {
     if (!payload.serviceArea || !Array.isArray(payload.serviceArea)){
       payload.serviceArea = [];
     } else {
+      console.log("Before:", payload.serviceArea);
        payload.serviceArea = payload.serviceArea.map((area) => {
         const location = locationValidator(area.city, area.state);
 
@@ -65,6 +66,7 @@ exports.create = async (req, res, next) => {
         };
       });
     }
+    console.log("After:", payload.serviceArea);
     const duplicate = await Service.findOne({
       caregiverId,
       serviceType: payload.serviceType,
@@ -460,6 +462,16 @@ exports.summary = async (req, res, next) => {
       match["serviceArea.state"] = new RegExp(
         `^${escapeRegex(location.state)}$`,
         "i",
+      );
+      const matched = await Service.find(match);
+      console.log(
+        matched.map((s) => ({
+          caregiver: s.caregiverId,
+          serviceType: s.serviceType,
+          city: s.serviceArea[0]?.city,
+          state: s.serviceArea[0]?.state,
+          isActive: s.isActive,
+        }))
       );
     const result = await Service.aggregate([
       { $match: match },
